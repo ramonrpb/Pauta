@@ -1,0 +1,138 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    		<div style="width: 100%;" align="center" >
+			
+				<h:form id="formListagem" prependId="false">
+					<p:messages id="mensagemSucesso" closable="true" />
+						
+					<p:spacer width="10px;" />
+					<div style="width: 100%; text-align: right;" >
+						<p:commandButton value="Adicionar Ano Letivo" update="@(form)" style="margin-right: 50px;"
+							actionListener="#{anoLetivoMB.novoAnoLetivo}" oncomplete="inserirAlterarAnoLetivo.show()" immediate="true" />
+					</div>
+					<p:dataTable id="funcionalidades" value="#{anoLetivoMB.listaAnoLetivo}"
+						var="anoLetivo" emptyMessage="Nenhuma anoLetivo foi cadastrada."
+					 	 paginator="true" rows="10" rowIndexVar="indice" >
+		  			
+			  			<p:column headerText="Ano" width="30px" sortBy="#{anoLetivo.ano}" >
+							<p:outputLabel value="#{anoLetivo.ano}" />
+			  			</p:column>
+						<p:column headerText="Semestre" sortBy="#{anoLetivo.semestre}">
+			  				<p:outputLabel value="#{anoLetivo.semestre}" />
+			  			</p:column>
+			  			<p:column headerText="Data Início" sortBy="#{anoLetivo.dataInicio}">
+			  				<p:outputLabel value="#{utilMB.formataData(anoLetivo.dataInicio)}" />
+			  			</p:column>
+			  			<p:column headerText="Data Fim" sortBy="#{anoLetivo.dataFim}">
+			  				<p:outputLabel value="#{utilMB.formataData(anoLetivo.dataFim)}" />
+			  			</p:column>			  			
+						<p:column headerText="Ações" width="100px;" style="text-align: center;" >
+						
+							<p:commandLink title="Alterar" process="@this" immediate="true" update=":form" oncomplete="inserirAlterarAnoLetivo.show()" >
+								<h:graphicImage library="imagens" name="editar.png" />
+								<f:setPropertyActionListener target="#{anoLetivoMB.anoLetivo}" value="#{anoLetivo}" />
+							</p:commandLink>
+							<p:spacer width="5px;" />
+							
+							<p:commandLink title="Excluir" update=":ccexclusao:formConfirmacao" process="@this" immediate="true" oncomplete="confirmacao.show()" >
+								<h:graphicImage library="imagens" name="excluir.jpg" />
+								<f:setPropertyActionListener target="#{anoLetivoMB.anoLetivo}" value="#{anoLetivo}" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+					<div style="width: 100%; text-align: right;" >
+						<p:commandButton value="Adicionar Ano Letivo" update=":form" style="margin-right: 50px;" process="@this, :form"
+							actionListener="#{anoLetivoMB.novoAnoLetivo}" oncomplete="inserirAlterarAnoLetivo.show()" resetValues="true" />
+					</div>
+				</h:form>
+				
+				<confirm:confirmacao id="ccexclusao" campoParaAtualizar=":formListagem"
+					metodo="#{anoLetivoMB.excluirAnoLetivo}" tituloPainel="Exclusão de Ano Letivo" 
+					mensagemConfirmacao="Tem certeza que deseja excluir o ano letivo #{anoLetivoMB.anoLetivo.ano} / #{anoLetivoMB.anoLetivo.semestre} ?"  />
+				
+				<p:dialog widgetVar="inserirAlterarAnoLetivo" closable="true" modal="true" appendTo="@(body)" header="Cadastro/Alteração Ano Letivo"
+				onShow="updateDialog()" >
+					<h:form id="form">
+					<p:remoteCommand name="updateDialog" resetValues="true" update=":form:panelCadastroAlteracaoAnoLetivo" />
+					
+						<p:messages closable="true" />
+						<p:outputPanel id="panelCadastroAlteracaoAnoLetivo" style="align: left;">
+							<p:panelGrid styleClass="panelGridSemBorda">
+								<p:row>
+									<p:column>
+										<p:outputLabel value="Ano" for="ano" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="ano" value="#{anoLetivoMB.anoLetivo.ano}"
+											required="true" requiredMessage="Obrigatório o preenchimento do ano" >
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItems value="#{anoLetivoMB.listaAno}" var="ano" itemValue="#{ano}" itemLabel="#{ano}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:outputLabel value="Semestre" for="semestre" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="semestre" value="#{anoLetivoMB.anoLetivo.semestre}"
+											required="true" requiredMessage="Obrigatório o preenchimento do semestre"
+											validator="akAnoLetivoValidator" >
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItems value="#{anoLetivoMB.listaSemestre}" var="semestre" itemValue="#{semestre}" itemLabel="#{semestre}" />
+											<f:attribute name="idAnoLetivo" value="#{anoLetivoMB.anoLetivo.id}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:outputLabel value="Data Início" for="dataInicio" />
+									</p:column>
+									<p:column>
+										<p:calendar id="dataInicio" value="#{anoLetivoMB.anoLetivo.dataInicio}" pattern="dd/MM/yyyy"
+											 maxdate="#{anoLetivoMB.anoLetivo.dataFim}" validator="anoLetivoValidatorDataMinimaMaxima" >
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+											<p:ajax event="dateSelect" update="form" global="false" />
+											<p:ajax event="change" update="form" global="false" />
+										</p:calendar>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:outputLabel value="Data Fim" for="dataFim" />
+									</p:column>
+									<p:column>
+										<p:calendar id="dataFim" value="#{anoLetivoMB.anoLetivo.dataFim}" pattern="dd/MM/yyyy" 
+											mindate="#{anoLetivoMB.anoLetivo.dataInicio}" validator="anoLetivoValidatorDataMinimaMaxima" >
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+											<p:ajax event="dateSelect" update="form" global="false" />
+											<p:ajax event="change" update="form" global="false" />
+										</p:calendar>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align:right;">
+										<p:commandButton update=":form, :formListagem:funcionalidades" value="Salvar" actionListener="#{anoLetivoMB.salvarAnoLetivo}"
+											rendered="#{anoLetivoMB.anoLetivo.id eq null}" process="@this, form" />
+											
+										<p:commandButton update=":form, :formListagem" value="Alterar" actionListener="#{anoLetivoMB.editarAnoLetivo}"
+											rendered="#{anoLetivoMB.anoLetivo.id ne null}" process="@this, form"
+											oncomplete="if (args &amp;&amp; !args.validationFailed) inserirAlterarAnoLetivo.hide()" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:outputPanel>
+					</h:form>
+				</p:dialog>
+				
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

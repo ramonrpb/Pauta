@@ -1,0 +1,111 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form id="form" >
+					<p:breadCrumb>  
+					    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Relatório da Pauta" action="relatorioPauta" process="@this" />
+					</p:breadCrumb>
+					<br/>
+					<p:messages id="msgCadastro" closable="true" />
+					
+					<p:panelGrid styleClass="panelGridSemBorda" >
+						<p:row>
+							<p:column>
+								<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="anoLetivo" value="#{relatorioPautaMB.anoLetivo.id}">
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{relatorioPautaMB.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+									<p:ajax event="change" listener="#{relatorioPautaMB.filtrarTurmasPorAnoLetivo}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column>
+								<p:outputLabel for="turma" value="Turma" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="turma" value="#{relatorioPautaMB.turma.id}" filter="true" filterMatchMode="contains" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{relatorioPautaMB.listaTurmas}" var="turma" itemValue="#{turma.id}" itemLabel="#{turma.disciplina.nome} - #{turma.nome}" />
+									<p:ajax event="change" listener="#{relatorioPautaMB.filtrarListaAlunoAulaPorTurma}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column>
+								<p:outputLabel for="mes" value="Mês" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="mes" value="#{relatorioPautaMB.mesVO.id}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{relatorioPautaMB.listaMeses}" var="mes" itemValue="#{mes.id}" itemLabel="#{mes.nome}" />
+									<p:ajax event="change" listener="#{relatorioPautaMB.carregarPauta}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column>
+								<p:outputLabel for="quantidadeAula" value="Quantidade de Aulas" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="quantidadeAula" value="#{relatorioPautaMB.quantidadeAula}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{relatorioPautaMB.listaQuantidadeAulaTotal}" var="aula" itemValue="#{aula}" itemLabel="#{aula}" />
+									<p:ajax event="change" listener="#{relatorioPautaMB.atualizaPauta()}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+							
+						</p:row>
+					</p:panelGrid>
+					
+					<p:outputPanel id="content" style="text-align: right;" styleClass="estiloRelatorioImpressao">
+					
+						<p:dataTable id="tabelaPauta" value="#{relatorioPautaMB.turma.alunoTurma}" var="alunoTurma" rendered="true"
+				    		emptyMessage="Não foram encontradas pautas para esta turma no período informado" rowIndexVar="indice">
+				    		
+			    			<f:facet name="header" >
+			    				<p:outputLabel value="Mês: #{relatorioPautaMB.mesVO.nome} - Código da Disciplina: #{relatorioPautaMB.turma.disciplina.codigo} - Nome da Disciplina: #{relatorioPautaMB.turma.disciplina.nome}" rendered="#{relatorioPautaMB.turma.alunoTurma.size() > 0}" style="float: left; font-size: 10px;"/>
+			    				<p:outputLabel value="Nome do Professor: #{relatorioPautaMB.turma.professor.nome}" rendered="#{relatorioPautaMB.turma.alunoTurma.size() > 0}" style="font-size: 10px;" />
+			    			</f:facet>
+			    			
+			    			<p:column headerText="Matricula" style="text-align: center;">
+			    				<p:outputLabel value="#{alunoTurma.aluno.matricula}" />
+			    			</p:column>
+			    			<p:column headerText="Aluno">
+			    				<p:outputLabel value="#{alunoTurma.aluno.nome}" />
+			    			</p:column>
+			    			
+			    			<p:columns var="dia" value="#{relatorioPautaMB.listaQuantidadeAula}">
+			    				
+			    			</p:columns>
+				    		
+			    			<f:facet name="footer">
+			    				<p:spacer height="20" />
+				    			<p:outputLabel style="font-size: 10px;" rendered="#{relatorioPautaMB.turma.alunoTurma.size() > 0}">
+				    				ENCERRADA EM:___/___/___  ASS:_______________________________________________  Total Aulas:__________
+				    			</p:outputLabel>
+				    			<br/>
+			    			</f:facet>
+			    		</p:dataTable>
+			    		
+			    			
+			    		
+			    		<p:commandButton value="Imprimir" type="button" rendered="#{! empty relatorioPautaMB.turma.alunoTurma}" >
+			            	<p:printer target="form:tabelaPauta" />
+			            </p:commandButton>
+		            </p:outputPanel>
+		            
+	    		</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

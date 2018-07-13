@@ -1,0 +1,77 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+    		<f:event listener="#{alunoMB.carregarAlunosCadastrados()}" type="preRenderView" />
+    		
+    		<h:form id="listaForm">
+	    		<p:messages closable="true"/>
+	    		<p:breadCrumb>  
+				    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Listagem de Alunos" action="listagemAlunos" process="@this" />
+				</p:breadCrumb>
+				<br/>
+				<p:panelGrid styleClass="panelGridSemBorda">
+					<p:row>
+						<p:column>
+							<p:outputLabel value="Filtrar por nome ou matrícula"/>
+						</p:column>
+						<p:column>
+							<p:inputText value="#{alunoMB.paginaVO.filtro}" />
+						</p:column>
+						<p:column>
+							<p:commandButton value="Filtrar" actionListener="#{alunoMB.carregarAlunosCadastrados()}" update=":listaForm" 
+							process=":listaForm" onstart="tabelaAlunosVar.getPaginator().setPage(0);">
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					
+				</p:panelGrid>
+				<div align="right">
+	    			<p:commandButton value="Adicionar" action="formularioAluno"/>
+	    		</div>
+	    		
+	    		<p:dataTable id="tabelaAlunos" value="#{alunoMB.lazyAluno}" var="a" rendered="true"
+	    		emptyMessage="Não há alunos cadastrados na base de dados" paginator="true" rows="10" lazy="true"
+							rowIndexVar="indice" widgetVar="tabelaAlunosVar">
+	    			<f:facet name="header">
+	    				Listagem de Alunos Cadastrados
+	    			</f:facet>
+	    			<p:column headerText="Nome">
+	    				<h:outputText value="#{a.nome}" />
+	    			</p:column>
+	    			<p:column headerText="Matrícula">
+	    				<h:outputText value="#{a.matricula}" />
+	    			</p:column>
+	    			<p:column headerText="E-mail">
+	    				<h:outputText value="#{a.email}" />
+	    			</p:column>
+	    			<p:column headerText="Opções" style="text-align: center;" >
+	    				<p:commandLink action="cadastroAluno.jsf" title="Alterar">
+	    				<h:graphicImage library="imagens" name="editar.png" />
+	    					<f:param name="idAluno" value="#{a.id}"/>
+	    				</p:commandLink>
+						<p:spacer width="10"/>
+						<p:commandLink update=":ccexclusao:formConfirmacao" process="@this" oncomplete="confirmacao.show()" title="Excluir">
+							<h:graphicImage library="imagens" name="excluir.jpg" />
+							<f:setPropertyActionListener target="#{alunoMB.aluno}" value="#{a}"/>
+						</p:commandLink>
+	    				
+	    			</p:column>
+	    		</p:dataTable>
+	    		<div align="right">
+	    			<p:commandButton value="Adicionar" action="formularioAluno"/>
+	    		</div>
+    		</h:form>
+    		<confirm:confirmacao id="ccexclusao" campoParaAtualizar=":listaForm:tabelaAlunos, :listaForm"
+					metodo="#{alunoMB.excluirAluno()}" tituloPainel="Exclusão de Aluno" 
+					mensagemConfirmacao="Tem certeza que deseja excluir o aluno #{alunoMB.aluno.nome} ?"  />
+    	</ui:define>
+   </ui:composition>
+</html>

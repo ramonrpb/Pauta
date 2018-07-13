@@ -1,0 +1,73 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form id="form" >
+					<p:messages id="msgCadastro" closable="true" />
+					<p:breadCrumb>  
+					    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Listagem de Aulas" action="/" process="@this" />
+					</p:breadCrumb>
+					<br/>
+					
+					<p:panelGrid styleClass="panelGridSemBorda" >
+						<p:row>
+							<p:column>
+								<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="anoLetivo" value="#{aulaMB.anoLetivo.id}" disabled="#{aulaMB.aula.id ne null}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{aulaMB.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+									<p:ajax event="change" listener="#{aulaMB.filtrarTurmasPorAnoLetivo}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column>
+								<p:outputLabel for="turma" value="Turma" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="turma" value="#{aulaMB.aula.turma.id}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{aulaMB.listaTurmas}" var="turma" itemValue="#{turma.id}" itemLabel="#{turma.disciplina.nome} - #{turma.nome}" />
+									<p:ajax event="change" listener="#{aulaMB.filtrarListaRelatorioPorTurma}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+					<p:outputPanel id="content">
+					<p:dataTable id="tabelaProfessores" value="#{aulaMB.listaAlunoAula}" var="alunoAula" rendered="true"
+			    		emptyMessage="Não foram encontrado aulas" paginator="true" rows="10"
+			    		rowIndexVar="indice">
+		    			<f:facet name="header">
+		    				<p:outputLabel value="Listagem de aulas" />
+		    			</f:facet>
+		    			
+		    			<p:column headerText="Alunos">
+		    				<p:outputLabel value="#{alunoAula.aluno.nome}" />
+		    			</p:column>
+		    		
+	    				<p:columns var="aula" value="#{aulaMB.listaAulas}" headerText="#{utilMB.formataData(aula.data)}">
+	    					<p:outputLabel value="#{aula.quantidade}" rendered="#{alunoAula.presenca}" />
+	    					<p:outputLabel value="0" rendered="#{! alunoAula.presenca}" />
+	    				</p:columns>
+		    		
+		    		</p:dataTable>
+		    		
+		    		<ui:insert name="content"  />
+		    		</p:outputPanel>
+		    		<p:commandButton value="Print" type="button"  >
+                        <p:printer target="content"  />
+                    </p:commandButton>
+	    		</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

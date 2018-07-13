@@ -1,0 +1,101 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+ 	<f:metadata>
+    	<f:viewParam name="idProfessor" value="#{professorMB.idProfessor}"></f:viewParam>
+	</f:metadata>
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    		
+		   		<h:form id="form" style="width: 100%;">
+		   			<div style="width: 100%; min-width:120px; max-width:1024px;">
+			   			<p:breadCrumb>  
+						    <p:menuitem value="Home" action="home" process="@this" />
+						    <p:menuitem value="Listagem de Professores" action="listagemProfessores" process="@this" />  
+						    <p:menuitem value="Cadastro de Professor" action="/" process="@this" />
+						</p:breadCrumb>
+					</div>
+				<h3 align="center">Cadastro Professor</h3>
+				
+				<div align="center"> 
+					<div class="panelCurtoFormulario">
+						<p:messages id="msgCadastro" closable="true" />
+					</div>
+					<p:spacer width="10" height="10" />
+					<p:panel header="Dados Cadastrais" styleClass="panelCurtoFormulario">	
+						<p:panelGrid styleClass="panelGridSemBorda" >
+							<p:row>
+								<p:column>
+									<p:outputLabel for="email" value="E-mail (Login)"  />
+								</p:column>
+								<p:column>
+									<p:inputText id="email" required="true" requiredMessage="E-mail é obrigatório" value="#{professorMB.professor.email}"
+							    		validator="#{validatorMB.validaExistenciaLogin}" maxlength="70" disabled="#{professorMB.professor.id ne null and utilMB.perfilAD == professorMB.professor.perfil}">
+							    		<f:attribute value="#{professorMB.professor.id}" name="idAtor" />
+							    	</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{null == professorMB.professor.id}" >
+								<p:column>
+									<p:outputLabel for="senha" value="Senha" />
+								</p:column>
+								<p:column>
+									<p:password id="senha" required="true" requiredMessage="Senha é obrigatória" value="#{professorMB.professor.senha}"
+								    	 match="confirmacaoSenha" validatorMessage="Senha não confere" feedback="true" promptLabel="Digite a Senha" 
+								    	 weakLabel="Senha fraca" goodLabel="Senha Razoável" strongLabel="Senha Forte" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row rendered="#{null == professorMB.professor.id}">
+								<p:column>
+									<p:outputLabel for="confirmacaoSenha" value="Confirmação de Senha" />
+								</p:column>
+								<p:column>
+									<p:password id="confirmacaoSenha" required="true" requiredMessage="Confirmação de senha é obrigatória"
+										value="#{professorMB.professor.senha}" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							
+						</p:panelGrid>
+						
+					</p:panel>
+					<br/>
+					<p:panel header="Dados Pessoais" styleClass="panelCurtoFormulario">
+						<p:panelGrid styleClass="panelGridSemBorda">
+							<p:row>
+								<p:column>
+									<p:outputLabel for="nome" value="Nome" />
+								</p:column>
+								<p:column>
+									<p:inputText id="nome" value="#{professorMB.professor.nome}" required="true" requiredMessage="Nome é obrigatório"
+										size="30" style="width: 250px;" maxlength="70" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="matricula" value="Matrícula" />
+								</p:column>
+								<p:column>
+									<p:inputText id="matricula" value="#{professorMB.professor.matricula}" required="true" requiredMessage="Nome é obrigatório"
+										size="30" style="width: 250px;" maxlength="70" disabled="#{null ne professorMB.professor.id and sessaoMB.ator.perfil eq utilMB.perfilPR}"
+										validator="akProfessorMatriculaValidator" >
+											<f:attribute name="codigo" value="#{professorMB.professor.id}" />
+										</p:inputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<div align="right" class="panelCurtoFormulario">
+						<p:commandButton action="#{professorMB.salvarProfessor}" value="Salvar" update=":form"/>
+					</div>
+				</div>
+				
+				
+			</h:form>
+			
+		</ui:define>
+	</ui:composition>
+</html>
+

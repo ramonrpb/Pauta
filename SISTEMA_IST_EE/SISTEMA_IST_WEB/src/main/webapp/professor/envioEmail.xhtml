@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form id="form" >
+					<div style="width: 100%; min-width:120px; max-width:1024px;">
+			   			<p:breadCrumb>  
+						    <p:menuitem value="Home" action="home" process="@this" />
+						    <p:menuitem value="Enviar E-mail" action="/" process="@this" />
+						</p:breadCrumb>
+					</div>
+					<p:messages id="msgCadastro" closable="true" />
+					
+					
+					<p:panel header="Dados aulas" >
+						<p:outputPanel style="text-align: right;">
+							<p:panelGrid styleClass="panelGridSemBorda" >
+								<p:row>
+									<p:column>
+										<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="anoLetivo" value="#{envioEmailMB.anoLetivo.id}"  >
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{envioEmailMB.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+											<p:ajax event="change" listener="#{envioEmailMB.filtrarTurmasPorAnoLetivo}" update=":form" />
+										</p:selectOneMenu>
+									</p:column>
+									
+									<p:column>
+										<p:outputLabel for="turma" value="Turma" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="turma" value="#{envioEmailMB.turma.id}" >
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{envioEmailMB.listaTurmas}" var="turma" itemValue="#{turma.id}" itemLabel="#{turma.disciplina.nome} - #{turma.nome}" />
+											<p:ajax event="change" listener="#{envioEmailMB.buscarTurma()}" update=":form" />
+										</p:selectOneMenu>
+									</p:column>
+									
+						 			
+								</p:row>
+							</p:panelGrid>
+							
+							<br />
+							<p:dataTable id="listaEnvioEmailTable" value="#{envioEmailMB.listaEnvioEmail}" var="envioEmail" emptyMessage="Não foram encontrados alunos para esta turma" >
+								<p:column>
+						            <f:facet name="header">Matrícula</f:facet>  
+							        <h:outputText value="#{envioEmail.aluno.matricula}" />
+								</p:column>
+							    <p:column>
+						            <f:facet name="header">Nome</f:facet>  
+									<p:outputLabel value="#{envioEmail.aluno.nome}" />
+								</p:column>
+								<p:column style="v-align: top;" width="100">
+									
+						            <f:facet name="header">
+						            	Enviar
+						            	<div style="float: right">
+								        	<p:selectBooleanCheckbox id="#{envioEmail.aluno.id}Email" value="#{envioEmailMB.enviarParaTodos}" >
+								            	<p:ajax event="change" listener="#{envioEmailMB.marcarTodos}" update=":form:listaEnvioEmailTable" />
+								            </p:selectBooleanCheckbox>
+							            </div>
+								    </f:facet>
+									<div align="center">
+										<p:selectBooleanCheckbox value="#{envioEmail.enviarEmail}" />
+									</div>
+									
+								</p:column>
+							</p:dataTable>
+							
+							<br />
+							<p:panelGrid styleClass="panelGridSemBorda" rendered="#{!empty envioEmailMB.listaEnvioEmail}">
+								<p:row>
+									<p:column>
+										<p:outputLabel value="Assunto"/>
+									</p:column>
+									<p:column>
+										<p:inputText value="#{envioEmailMB.assuntoEmail}" required="true" requiredMessage="Assunto obrigatório" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:outputLabel value="Texto e-mail"/>
+									</p:column>
+									<p:column>
+										<p:inputTextarea maxlength="1000" rows="5" value="#{envioEmailMB.textoEmail}" cols="15" autoResize="true" required="true" requiredMessage="Texto do e-mail obrigatório"/>
+									</p:column>
+									
+								</p:row>
+							</p:panelGrid>
+							
+				    		<p:commandButton action="#{envioEmailMB.enviarEmail}" value="Enviar" update=":form" rendered="#{!empty envioEmailMB.listaEnvioEmail}"/>
+				    		
+				    	</p:outputPanel>
+					</p:panel>
+				
+				</h:form>		
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

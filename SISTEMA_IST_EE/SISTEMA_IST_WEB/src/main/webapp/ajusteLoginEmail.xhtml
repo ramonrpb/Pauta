@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="template.xhtml">
+    	<ui:define name="conteudo">
+			<div style="width: 100%;" align="center" >
+			
+				<h:form id="form" >
+		    		
+		    		<p:messages id="mensagemErro" closable="true" autoUpdate="true"/>
+
+					<h3>Mudar e-mail</h3>
+			    	<br />
+			    	<p:outputLabel value="Ajustar sufixo dos e-mails cadastrados"/>
+			    	<br/>
+	    			<p:outputLabel value="Sufixo e-mail" /><p:spacer width="5px;" />
+			    	<p:inputText id="email" value="#{atorMB.sufixoEmail}" />
+				    <p:commandButton value="Editar e-mails" actionListener="#{atorMB.mudarSufixoEmails()}" process=":form" update=":form"/>	
+				    <br/>
+				    <h3>Acrescentar zeros à matrícula</h3>
+			    	<br />
+				    <p:outputLabel value="Ajustar zeros a frente da matrícula"/>
+				    <br/>
+	    			<p:outputLabel value="Quantidade de dígitos" /><p:spacer width="5px;" />
+			    	<p:inputText id="quantidadeDigito" value="#{atorMB.quantidadeDigitos}"  />
+				    <p:commandButton value="Editar Matrículas" actionListener="#{atorMB.acrescentarZerosAFrente()}" process=":form" update=":form"/>	
+		    		
+		    		
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>
+

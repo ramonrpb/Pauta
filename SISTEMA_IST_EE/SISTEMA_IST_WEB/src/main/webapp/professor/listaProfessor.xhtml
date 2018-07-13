@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao"
+      >
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+    		<f:event listener="#{professorMB.carregarProfessoresCadastrados()}" type="preRenderView" />
+    		
+    		<h:form id="listaForm">
+	    		<p:messages closable="true"/>
+	    		<p:breadCrumb>  
+				    <p:menuitem value="Home" action="home" process="@this" />  
+				    <p:menuitem value="Listagem de Professores" action="/" process="@this" />
+				</p:breadCrumb>
+				<br/>
+				
+				<p:panelGrid styleClass="panelGridSemBorda">
+					<p:row>
+						<p:column>
+							<p:outputLabel value="Filtrar por nome ou matrícula"/>
+						</p:column>
+						<p:column>
+							<p:inputText id="filtroProfessor" value="#{professorMB.paginaVO.filtro}" maxlength="70" style="width: 200px;"/>
+							<p:watermark value="Digite o nome ou a matrícula" for="filtroProfessor"/>
+						</p:column>
+						<p:column>
+							<p:commandButton value="Filtrar" onstart="tabelaProfessoresVar.getPaginator().setPage(0);" actionListener="#{professorMB.carregarProfessoresCadastrados()}" update=":listaForm" process=":listaForm">
+								
+							</p:commandButton>
+						</p:column>
+					</p:row>
+					
+				</p:panelGrid>
+				
+				<div align="right">
+	    			<p:commandButton value="Adicionar" action="formularioProfessor"/>
+	    		</div>
+	    		
+	    		<p:dataTable id="tabelaProfessores" value="#{professorMB.lazyProfessores}" var="p" rendered="true"
+	    		emptyMessage="Não há professores cadastrados na base de dados" paginator="true" rows="10" lazy="true"
+	    		rowIndexVar="indice" widgetVar="tabelaProfessoresVar">
+	    			<f:facet name="header">
+	    				Listagem de Professores Cadastrados
+	    			</f:facet>
+	    			<p:column headerText="Nome">
+	    				<h:outputText value="#{p.nome}" />
+	    			</p:column>
+	    			<p:column headerText="Matrícula">
+	    				<h:outputText value="#{p.matricula}" />
+	    			</p:column>
+	    			<p:column headerText="E-mail">
+	    				<h:outputText value="#{p.email}" />
+	    			</p:column>
+	    			<p:column headerText="Opções">
+	    				<p:commandLink action="cadastroProfessor.jsf">
+	    					<h:graphicImage library="imagens" name="editar.png" title="Alterar"/>
+	    					<f:param name="idProfessor" value="#{p.id}"/>
+	    				</p:commandLink>
+						<p:spacer width="10"/>
+						
+						<p:commandLink update=":ccexclusao:formConfirmacao" process="@this" oncomplete="confirmacao.show()" title="Excluir">
+	    					<h:graphicImage library="imagens" name="excluir.jpg" />
+	    					<f:setPropertyActionListener target="#{professorMB.professor}" value="#{p}"/>
+	    				</p:commandLink>
+	    			</p:column>
+	    		</p:dataTable>
+	    		<div align="right">
+	    			<p:commandButton value="Adicionar" action="formularioProfessor"/>
+	    		</div>
+    		</h:form>
+    		<confirm:confirmacao id="ccexclusao" campoParaAtualizar=":listaForm:tabelaProfessores, :listaForm"
+					metodo="#{professorMB.excluirProfessor()}" tituloPainel="Exclusão de Professor" 
+					mensagemConfirmacao="Tem certeza que deseja excluir o professor #{professorMB.professor.nome} ?"  />
+				
+    	</ui:define>
+   </ui:composition>
+</html>

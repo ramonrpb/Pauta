@@ -1,0 +1,120 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form id="form" >
+					<div style="width: 100%; min-width:120px; max-width:1024px;">
+			   			<p:breadCrumb>  
+						    <p:menuitem value="Home" action="home" process="@this" />
+						    <p:menuitem value="Listagem de Aulas" action="listagemAula" process="@this" />  
+						    <p:menuitem value="Cadastro de Aula" action="/" process="@this" />
+						</p:breadCrumb>
+					</div>
+					<p:messages id="msgCadastro" closable="true" />
+					
+					<h:inputHidden required="#{ empty aulaMB.listaAlunoAula}" requiredMessage="Não é possível lançar uma aula para turma sem alunos." />
+					
+					<p:panel header="Dados aulas" >
+						<p:outputPanel style="text-align: right;" >
+							<p:panelGrid styleClass="panelGridSemBorda" id="panelFiltro" >
+								<p:row>
+									<p:column>
+										<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="anoLetivo" value="#{aulaMB.anoLetivo.id}" disabled="#{aulaMB.aula.id ne null}" >
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{aulaMB.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+											<p:ajax event="change" listener="#{aulaMB.filtrarTurmasPorAnoLetivo}" update="panelFiltro" />
+										</p:selectOneMenu>
+									</p:column>
+									
+									<p:column>
+										<p:outputLabel for="turma" value="Turma" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="turma" value="#{aulaMB.aula.turma.id}" disabled="#{aulaMB.aula.id ne null}" >
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{aulaMB.listaTurmas}" var="turma" itemValue="#{turma.id}" itemLabel="#{turma.disciplina.nome} - #{turma.nome}" />
+											<p:ajax event="change" update="panelFiltro" />
+											<p:ajax event="change" listener="#{aulaMB.filtrarListaAlunoAulaPorTurma}" update="tabela" />
+										</p:selectOneMenu>
+									</p:column>
+									
+						 			<p:column rendered="#{aulaMB.aula.turma.id != null}" >
+										<p:outputLabel for="data" value="Data da Aula" />
+									</p:column>
+									<p:column rendered="#{aulaMB.aula.turma.id != null}">
+										<p:calendar id="data" value="#{aulaMB.aula.data}" pattern="dd/MM/yyyy"
+										required="true" requiredMessage="É obrigatório adicionar a data da aula"
+										validator="aulaTurmaDataValidator" 
+										mindate="#{aulaMB.anoLetivo.dataInicio}"
+										maxdate="#{aulaMB.anoLetivo.dataFim}" >
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+											<f:attribute name="idTurma" value="#{aulaMB.aula.turma.id}" />
+											<f:attribute name="codigo" value="#{aulaMB.aula.id}" />
+											<f:attribute name="anoLetivo" value="#{aulaMB.anoLetivo}" />
+										</p:calendar>
+									</p:column>
+									<p:column rendered="#{aulaMB.aula.turma.id != null}">
+										<p:outputLabel for="qtd" value="Tempo" />
+									</p:column>
+									<p:column rendered="#{aulaMB.aula.turma.id != null}">
+										<p:spinner id="qtd" max="6" min="1" value="#{aulaMB.aula.quantidade}" maxlength="1"
+										required="true" requiredMessage="É obrigatório adicionar a quantidade de aulas"  disabled="#{aulaMB.aula.id ne null}"  >
+											<p:ajax event="change" listener="#{aulaMB.filtrarListaAlunoAulaPorTurma}" update="tabela" />
+										</p:spinner>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+							
+							<br />
+							
+							<p:dataTable id="tabela" value="#{aulaMB.listaAlunoAula}" var="alunoAlunoAula" 
+							 emptyMessage="Não foram encontrados alunos para esta turma"  >
+								<p:column>
+						            <f:facet name="header">Matrícula</f:facet>
+							        <h:outputText value="#{alunoAlunoAula.aluno.matricula}" />
+								</p:column>
+							    <p:column>
+						            <f:facet name="header">Nome</f:facet>
+									<p:outputLabel value="#{alunoAlunoAula.aluno.nome}" />
+								</p:column>
+								<p:column style="width: 15%; min-width: 100px;">
+						            <f:facet name="header">Presença</f:facet>
+						            
+						            <p:panelGrid columns="2"  styleClass="panelGridSemBorda" >
+						                <p:selectManyCheckbox value="#{aulaMB.listaAlunoAulasPresenca[alunoAlunoAula.aluno.id]}" >
+								            <f:selectItems value="#{aulaMB.listaPresenca}" var="numeroAula" itemLabel="" itemValue="#{numeroAula}" />
+								           <p:ajax event="change" global="false" update="tabela" process=":form:tabela" listener="#{aulaMB.verificarCheckTotal(alunoAlunoAula.aluno.id)}" />
+								        </p:selectManyCheckbox>
+
+							            <p:outputPanel >
+											<p:outputLabel value="Todas:" rendered="#{aulaMB.aula.quantidade gt 1}" />
+									        <p:selectBooleanCheckbox value="#{aulaMB.listaAlunoTodasAulas[alunoAlunoAula.aluno.id]}" 
+									        	rendered="#{aulaMB.aula.quantidade gt 1}" >
+									        	<p:ajax event="change" global="false" update="tabela" process=":form:tabela" listener="#{aulaMB.preencheDesmarcaValoresCheck(alunoAlunoAula.aluno.id)}" />
+									        </p:selectBooleanCheckbox>
+							            </p:outputPanel>
+							        </p:panelGrid>
+								</p:column>
+							</p:dataTable>
+							
+							<br />
+				    		<p:commandButton action="#{aulaMB.salvar}" value="Salvar" update=":form" rendered="#{aulaMB.aula.id eq null}" />
+				    		<p:commandButton action="#{aulaMB.editar}" value="Alterar" update=":form" rendered="#{aulaMB.aula.id ne null}" />
+				    	</p:outputPanel>
+					</p:panel>
+				
+				</h:form>		
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

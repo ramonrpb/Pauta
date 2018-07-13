@@ -1,0 +1,73 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+			<div style="width: 100%;" align="center" >
+				<h:form prependId="false" id="formAlterarSenha" >
+					
+					<p:breadCrumb>  
+					    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Alterar Senha" action="alterarSenha" process="@this" />
+					</p:breadCrumb>
+					
+					<p:panel>
+						<p:panelGrid styleClass="panelGridSemBorda" >
+							<p:row>
+								<p:column colspan="2" >
+									<p:messages autoUpdate="true" closable="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="login" value="Login"  />
+								</p:column>
+								<p:column>
+									<p:inputText id="login" disabled="true" value="#{gerenciarSenhaMB.login}" style="width: 250px;" />
+								</p:column>
+							</p:row>
+							<p:row >
+								<p:column>
+									<p:outputLabel for="senhaAtual" value="Senha atual" />
+								</p:column>
+								<p:column>
+									<p:password id="senhaAtual" required="true" requiredMessage="Senha atual é obrigatória" value="#{gerenciarSenhaMB.senhaAtual}" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="senha" value="Nova senha" />
+								</p:column>
+								<p:column>
+									<p:password id="senha" required="true" requiredMessage="Senha nova é obrigatória" value="#{gerenciarSenhaMB.senhaNova}"
+								    	 match="confirmacaoSenha" validatorMessage="Senha nova não confere" feedback="true" promptLabel="Digite a Senha" 
+								    	 weakLabel="Senha fraca" goodLabel="Senha Razoável" strongLabel="Senha Forte" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row >
+								<p:column>
+									<p:outputLabel for="confirmacaoSenha" value="Confirmação de nova senha" />
+								</p:column>
+								<p:column>
+									<p:password id="confirmacaoSenha" required="true" requiredMessage="Confirmção de nova senha é obrigatória"
+										value="#{gerenciarSenhaMB.senhaNova}" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<div style="float: right; margin-top: 3px;">
+										<p:commandButton icon="ui-icon-disk" value="Salvar" action="#{gerenciarSenhaMB.alterarSenha}" />
+									</div>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						
+					</p:panel>
+				</h:form>		
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

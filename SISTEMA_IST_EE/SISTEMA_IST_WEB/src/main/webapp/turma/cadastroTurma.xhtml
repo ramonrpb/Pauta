@@ -1,0 +1,148 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form id="formTurma" enctype="multipart/form-data" >
+					<p:messages closable="true"/>
+					<div style="width: 100%; min-width:120px; max-width:1024px;">
+			   			<p:breadCrumb>  
+						    <p:menuitem value="Home" action="home" process="@this" />
+						    <p:menuitem value="Listagem de Turmas" action="listagemTurmas" process="@this" />
+						    <p:menuitem value="Cadastro Turma" action="formularioTurma" process="@this" />  
+						</p:breadCrumb>
+					</div>
+					<h3 align="center">Cadastro Turma</h3>
+					<p:panel header="Dados da Turma">
+						
+						<p:panelGrid styleClass="panelGridSemBorda" columns="6">
+							<p:outputLabel value="Ano Letivo" for="anoLetivo"/>
+							<p:selectOneMenu id="anoLetivo" value="#{turmaMB.turma.anoLetivo.id}" 
+							required="true" requiredMessage="Ano Letivo obrigatório" styleClass="comboSelectOneMenu">
+								<f:selectItem itemLabel="--selecione--" />
+								<f:selectItems value="#{turmaMB.comboTurmaVO.listaAnoLetivo}" var="item"
+								itemLabel="#{item.nomeFormatado}" itemValue="#{item.id}"
+								/>
+							</p:selectOneMenu>
+					
+							<p:outputLabel value="Período" for="periodo"/>
+							<p:selectOneMenu id="periodo" value="#{turmaMB.periodo.id}" 
+							required="true" requiredMessage="Período obrigatório" styleClass="comboSelectOneMenu">
+								<p:ajax update="disciplina" process="@this" event="change"/>
+								<f:selectItem itemLabel="--selecione--" />
+								<f:selectItems value="#{turmaMB.comboTurmaVO.listaPeriodo}" 
+								var="item" itemLabel="#{item.nome}" itemValue="#{item.id}"
+								  />
+								
+							</p:selectOneMenu>
+					
+							<p:outputLabel value="Disciplina" for="disciplina"/>
+							<p:selectOneMenu id="disciplina" value="#{turmaMB.turma.disciplina.id}"
+							required="true" requiredMessage="Disciplina obrigatório" styleClass="comboSelectOneMenu">
+								<f:selectItem itemLabel="--selecione--" />
+								<f:selectItems value="#{turmaMB.populaDisciplina()}" var="item" 
+								itemLabel="#{item.nome}" itemValue="#{item.id}"/>
+							</p:selectOneMenu>
+						
+							<p:outputLabel value="Turno" for="turno"/>
+							<p:selectOneMenu id="turno" value="#{turmaMB.turma.turno.id}"
+								required="true" requiredMessage="Turno obrigatório" styleClass="comboSelectOneMenu">
+								<f:selectItem itemLabel="--selecione--" />
+								<f:selectItems value="#{turmaMB.comboTurmaVO.listaTurno}" var="item" 
+								itemLabel="#{item.nome}" itemValue="#{item.id}"/>
+							</p:selectOneMenu>
+							
+                       		<p:outputLabel value="Horário" for="horario"/>
+                       		<p:inputText id="horario" value="#{turmaMB.turma.horario}" maxlength="70"  
+                       		required="true" requiredMessage="Horário obrigatório"/>
+                       		
+                       		<p:spacer width="10px"/>
+                       		<p:spacer width="10px"/>
+                       		
+                       		<p:outputLabel value="Professor" for="professor"/>
+								
+							<p:autoComplete id="professor" value="#{turmaMB.turma.professor}" 
+							completeMethod="#{turmaMB.completarProfessor}"
+                       		var="professor" 
+                       		itemLabel="#{professor.nomeEMatricula}" 
+                       		itemValue="#{professor}" 
+                       		forceSelection="true" dropdown="true"
+                       		required="true" requiredMessage="Professor obrigatório" maxlength="100" 
+                       		styleClass="autocomplete"
+                       		converter="professorConverter"
+                       		minQueryLength="3"
+                       		/>
+                       		
+                       		<p:outputLabel value="Sigla" for="nome"/>
+                       		<p:inputText id="nome" value="#{turmaMB.turma.nome}" maxlength="70"  
+                       		required="true" requiredMessage="Nome obrigatório"/>
+						</p:panelGrid>
+						
+					</p:panel>
+					<div align="right">
+						<p:commandButton value="Salvar" action="#{turmaMB.salvar()}" update=":formTurma"/>
+					</div>
+					<p:panel header="Alunos da Turma">
+						<p:panelGrid styleClass="panelGridSemBorda" columns="4">
+							<p:outputLabel value="Aluno" for="aluno"/>
+								
+							<p:autoComplete id="aluno" value="#{turmaMB.aluno}" 
+							completeMethod="#{comboMB.completarAluno}"
+                       		var="aluno" 
+                       		itemLabel="#{aluno.nomeEMatricula}" 
+                       		itemValue="#{aluno}" 
+                       		forceSelection="true" dropdown="true"
+                       		maxlength="100" 
+                       		styleClass="autocomplete"
+                       		converter="alunoConverter"
+                       		minQueryLength="3"
+                       		>
+                       			
+                       		</p:autoComplete>
+                       		<p:watermark value="Digite o nome ou a matrícula" for="aluno"/>
+                       		<p:commandButton value="+" actionListener="#{turmaMB.adicionarAluno()}" 
+                       		process="@this, :formTurma:aluno"
+                       		update=":formTurma:aluno, :formTurma:tabelaAlunos, :formTurma:mensagemAluno"/>
+                       		
+						</p:panelGrid>
+						<p:messages id="mensagemAluno" closable="true"/>
+						<p:dataTable id="tabelaAlunos" value="#{turmaMB.turma.alunoTurma}" var="a" rendered="true"
+				    		emptyMessage="Não há alunos associados" 
+										rowIndexVar="indice">
+				    			<f:facet name="header">
+				    				Listagem de Alunos
+				    			</f:facet>
+				    			<p:column headerText="Nome" sortBy="#{a.aluno.nome}">
+				    				<h:outputText value="#{a.aluno.nome}" />
+				    			</p:column>
+				    			<p:column headerText="Matrícula" sortBy="#{a.aluno.matricula}">
+				    				<h:outputText value="#{a.aluno.matricula}" />
+				    			</p:column>
+				    			<p:column headerText="E-mail">
+				    				<h:outputText value="#{a.aluno.email}" />
+				    			</p:column>
+				    			<p:column headerText="Opções" >
+				    				<div align="center">
+										<p:commandLink update=":formTurma:tabelaAlunos" process="@this" title="Excluir">
+											<h:graphicImage library="imagens" name="excluir.jpg" />
+											<p:collector unique="#{a.aluno.id}" value="#{a}" removeFrom="#{turmaMB.turma.alunoTurma}"/>
+											<p:collector unique="#{a.id}" value="#{a}" addTo="#{turmaMB.alunoTurmaExcluido}"></p:collector>
+										</p:commandLink>
+				    				</div>
+				    			</p:column>
+	    				</p:dataTable>
+						
+					</p:panel>
+					<div align="right">
+						<p:commandButton value="Salvar" action="#{turmaMB.salvar()}" update=":formTurma"/>
+					</div>
+				</h:form>		
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -1,0 +1,83 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="template.xhtml">
+    	<ui:define name="conteudo">
+			<div style="width: 100%;" align="center" >
+				<h:form prependId="false" id="formEsqueciMinhaSenha" >
+					
+					<p:breadCrumb>  
+					    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Esqueci minha senha" action="esqueciMinhaSenha" process="@this" />
+					</p:breadCrumb>
+					
+					<p:panel id="painel" >
+						<p:panelGrid >
+							<p:row>
+								<p:column colspan="2" >
+									<p:messages autoUpdate="true" closable="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2" >
+									<p:outputLabel value="Para redefinir sua senha, digite o login que você usa para acessar o SISTEMA IST." />
+									<br/>
+									<p:outputLabel value="Nos enviaremos um e-mail para o endereço de e-mail associado a este login." />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="login" value="Login" />
+								</p:column>
+								<p:column>
+									<p:inputText id="login" value="#{gerenciarSenhaMB.login}" required="true" disabled="#{gerenciarSenhaMB.digitarCodigo}"
+										requiredMessage="Por favor digite seu login de acesso ao SISTEMA IST." style="width: 210px;" />
+									
+									<p:spacer width="5px;" />
+									<p:commandButton value="Enviar" action="#{gerenciarSenhaMB.gerarCodigoEnviarEmail}" update="painel" rendered="#{!gerenciarSenhaMB.digitarCodigo}" />
+									<p:commandButton value="Resetar" update="painel" rendered="#{gerenciarSenhaMB.digitarCodigo}" process="@this" >
+										<f:setPropertyActionListener target="#{gerenciarSenhaMB.digitarCodigo}" value="false" />
+									</p:commandButton>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{gerenciarSenhaMB.digitarCodigo}" >
+								<p:column>
+									<p:outputLabel for="codigo" value="Codigo" />
+								</p:column>
+								<p:column>
+									<p:inputText id="codigo" required="true" requiredMessage="Codigo é obrigatório" value="#{gerenciarSenhaMB.codigo}" maxlength="15" />
+									<p:spacer width="5px;" />
+								</p:column>
+							</p:row>
+							<p:row rendered="#{gerenciarSenhaMB.digitarCodigo}">
+								<p:column>
+									<p:outputLabel for="senha" value="Nova senha" />
+								</p:column>
+								<p:column>
+									<p:password id="senha" required="true" requiredMessage="Senha nova é obrigatória" value="#{gerenciarSenhaMB.senhaNova}"
+								    	 match="confirmacaoSenha" validatorMessage="Senha nova não confere" feedback="true" promptLabel="Digite a Senha" 
+								    	 weakLabel="Senha fraca" goodLabel="Senha Razoável" strongLabel="Senha Forte" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row rendered="#{gerenciarSenhaMB.digitarCodigo}" >
+								<p:column>
+									<p:outputLabel for="confirmacaoSenha" value="Confirmação de nova senha" />
+								</p:column>
+								<p:column>
+									<p:password id="confirmacaoSenha" required="true" requiredMessage="Confirmção de nova senha é obrigatória"
+										value="#{gerenciarSenhaMB.senhaNova}" redisplay="true" maxlength="15" />
+									<p:commandButton icon="ui-icon-disk" value="Alterar Senha" action="#{gerenciarSenhaMB.alterarSenha}" rendered="#{gerenciarSenhaMB.digitarCodigo}" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						
+						
+					</p:panel>
+				</h:form>		
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

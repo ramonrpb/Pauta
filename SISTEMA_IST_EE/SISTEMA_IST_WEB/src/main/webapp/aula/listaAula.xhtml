@@ -1,0 +1,89 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form id="form" >
+					<p:breadCrumb>  
+					    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Listagem de Aula" action="/" process="@this" />
+					</p:breadCrumb>
+					<br/>
+					<p:messages id="msgCadastro" closable="true" />
+					
+					<p:panelGrid styleClass="panelGridSemBorda" >
+						<p:row>
+							<p:column>
+								<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="anoLetivo" value="#{aulaMB.anoLetivo.id}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{aulaMB.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+									<p:ajax event="change" listener="#{aulaMB.filtrarTurmasPorAnoLetivo}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column>
+								<p:outputLabel for="turma" value="Turma" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="turma" value="#{aulaMB.aula.turma.id}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{aulaMB.listaTurmas}" var="turma" itemValue="#{turma.id}" itemLabel="#{turma.disciplina.nome} - #{turma.nome}" />
+									<p:ajax event="change" listener="#{aulaMB.filtrarListaAulaPorTurma}" update=":form" />
+								</p:selectOneMenu>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+					<div align="right">
+		    			<p:commandButton value="Adicionar" action="formularioAula"/>
+		    		</div>
+					<p:dataTable id="tabelaProfessores" value="#{aulaMB.listaAulas}" var="aula" rendered="true"
+			    		emptyMessage="Não foram encontrado aulas para esta turma" paginator="true" rows="10"
+			    		rowIndexVar="indice">
+		    			<f:facet name="header">
+		    				<p:outputLabel value="Listagem de aulas de #{aulaMB.aula.turma.disciplina.nome}" rendered="#{aulaMB.aula.turma.id ne null}" />
+		    				<p:outputLabel value="Listagem de aulas" rendered="#{aulaMB.aula.turma.id eq null}" />
+		    			</f:facet>
+		    			<p:column headerText="Data aula">
+		    				<p:outputLabel value="#{utilMB.formataData(aula.data)}" />
+		    			</p:column>
+		    			<p:column headerText="Quantidade Aula">
+		    				<p:outputLabel value="#{aula.quantidade}" />
+		    			</p:column>
+		    			<p:column headerText="Opções" >
+		    				<p:commandLink action="editarAula" rendered="#{utilMB.dataMenorIgualHoje(aula.turma.anoLetivo.dataFim) or sessaoMB.ator.perfil eq utilMB.perfilAD}" >
+		    					<h:graphicImage library="imagens" name="editar.png" />
+		    					<f:setPropertyActionListener target="#{sessaoMB.aula}" value="#{aula}" />
+		    				</p:commandLink>
+							<p:spacer width="10"/>
+							<p:commandLink title="Excluir" update=":ccexclusao:formConfirmacao" process="@this" immediate="true" 
+								oncomplete="confirmacao.show()" rendered="#{utilMB.dataMenorIgualHoje(aula.turma.anoLetivo.dataFim) or sessaoMB.ator.perfil eq utilMB.perfilAD}" >
+								<h:graphicImage library="imagens" name="excluir.jpg" />
+								<f:setPropertyActionListener target="#{aulaMB.aula}" value="#{aula}"  />
+							</p:commandLink>
+							<p:spacer width="5px;" rendered="#{utilMB.dataMenorIgualHoje(aula.turma.anoLetivo.dataFim) eq false and sessaoMB.ator.perfil eq utilMB.perfilAD}" />
+							<p:outputLabel rendered="#{utilMB.dataMenorIgualHoje(aula.turma.anoLetivo.dataFim) eq false}" 
+								value="Ano Letivo encerrado"  />
+							
+		    			</p:column>
+		    		</p:dataTable>
+		    		<div align="right">
+		    			<p:commandButton value="Adicionar" action="formularioAula"/>
+		    		</div>
+	    		</h:form>
+	    		
+				<confirm:confirmacao id="ccexclusao" campoParaAtualizar=":form"
+					metodo="#{aulaMB.excluir}" tituloPainel="Exclusão de Aula" 
+					mensagemConfirmacao="Tem certeza que deseja excluir a aula do dia #{utilMB.formataData(aulaMB.aula.data)} ?"  />
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -1,0 +1,158 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao"
+      >
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+    		<f:event listener="#{turmaMB.carregarTurmasCadastrados()}" type="preRenderView" />
+    		
+    		<h:form id="listaForm">
+	    		<p:messages closable="true"/>
+	    		<p:breadCrumb>  
+				    <p:menuitem value="Home" action="home" process="@this" />  
+				    <p:menuitem value="Listagem de Turmas" action="/" process="@this" />
+				</p:breadCrumb>
+				<br/>
+				<p:panel  header="Gerar Turmas a partir de um Ano Letivo" toggleable="true" collapsed="true" rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAD}" >
+					<p:panelGrid columns="5" id="panelGridGerarTurmas" styleClass="panelGridSemBorda">
+						
+						<p:outputLabel value="Ano Letivo Origem"/>
+						<p:selectOneMenu id="anoLetivoOrigem" value="#{turmaMB.anoLetivoOrigem}">
+							<f:selectItems value="#{turmaMB.comboTurmaVO.listaAnoLetivo}" var="item" itemLabel="#{item.nomeFormatado}" itemValue="#{item.id}"/>
+						</p:selectOneMenu>
+						<p:outputLabel value="Ano Letivo Destino"/>
+						<p:selectOneMenu id="anoLetivoDestino" value="#{turmaMB.anoLetivoDestino}">
+							<f:selectItems value="#{turmaMB.comboTurmaVO.listaAnoLetivo}" var="item" itemLabel="#{item.nomeFormatado}" itemValue="#{item.id}"/>
+						</p:selectOneMenu>
+						<p:commandButton value="Gerar Turmas" action="#{turmaMB.gerarTurmasPorAnoLetivo()}" process="@this, :listaForm:panelGridGerarTurmas"></p:commandButton>
+					</p:panelGrid>
+					
+				</p:panel>
+				
+				<p:panelGrid styleClass="panelGridSemBorda" >
+						<p:row>
+							<p:column>
+								<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="anoLetivo" value="#{turmaMB.anoLetivo.id}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{turmaMB.comboTurmaVO.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+									
+								</p:selectOneMenu>
+							</p:column>
+							
+							<p:column>
+								<p:outputLabel for="periodo" value="Período" />
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="periodo" value="#{turmaMB.periodo.id}" >
+									<f:selectItem itemLabel="Selecione" />
+									<f:selectItems value="#{turmaMB.comboTurmaVO.listaPeriodo}" var="per" itemValue="#{per.id}" itemLabel="#{per.nome}" />
+									<p:ajax update="disciplina" process="@this" event="change"/>
+								</p:selectOneMenu>
+							</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="disciplina" value="Disciplina" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="disciplina" value="#{turmaMB.disciplina.id}" >
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{turmaMB.populaDisciplina()}" var="d" itemValue="#{d.id}" itemLabel="#{d.nome}" />
+										
+									</p:selectOneMenu>
+								</p:column>
+								
+								<p:column>
+									<p:outputLabel for="turno" value="Turno" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="turno" value="#{turmaMB.turno.id}" >
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{turmaMB.comboTurmaVO.listaTurno}" var="t" itemValue="#{t.id}" itemLabel="#{t.nome}" />
+										
+									</p:selectOneMenu>
+								</p:column>
+								
+								
+								<p:column rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAD}">
+									<p:outputLabel for="professor" value="Professor" />
+								</p:column>
+								<p:column rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAD}">
+									<p:selectOneMenu id="professor" value="#{turmaMB.professor.id}" >
+										<f:selectItem itemLabel="Selecione" />
+										<f:selectItems value="#{turmaMB.comboTurmaVO.listaProfessor}" var="prof" itemValue="#{prof.id}" itemLabel="#{prof.nome}" />
+										
+									</p:selectOneMenu>
+								</p:column>
+								
+								
+								<p:column>
+										
+									<p:commandButton value="Filtrar" actionListener="#{turmaMB.carregarTurmasCadastrados()}" onstart="tabelaTurmasVar.getPaginator().setPage(0);"
+									update=":listaForm:tabelaTurmas"/>
+								</p:column>
+							
+						</p:row>
+					</p:panelGrid>
+					
+					
+				
+				<div align="right">
+	    			<p:commandButton value="Adicionar" action="formularioTurma" rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAD}"/>
+	    		</div>
+	    		
+	    		<p:dataTable id="tabelaTurmas" value="#{turmaMB.lazyTurmas}" var="t" rendered="true"
+	    		emptyMessage="Não há turmas cadastradas na base de dados" paginator="true" rows="10" lazy="true"
+	    		rowIndexVar="indice" paginatorAlwaysVisible="false" widgetVar="tabelaTurmasVar" >
+	    			<f:facet name="header">
+	    				Listagem de Turmas Cadastrados
+	    			</f:facet>
+	    			<p:column headerText="Ano Letivo" sortBy="#{t.anoLetivo.nomeFormatado}">
+	    				<h:outputText value="#{t.anoLetivo.nomeFormatado}" />
+	    			</p:column>
+	    			<p:column headerText="Turma">
+	    				<h:outputText value="#{t.nome}" />
+	    			</p:column>
+	    			<p:column headerText="Professor">
+	    				<h:outputText value="#{t.professor.nome}" />
+	    			</p:column>
+	    			<p:column headerText="Disciplina">
+	    				<h:outputText value="#{t.disciplina.nome}" />
+	    			</p:column>
+	    			<p:column headerText="Periodo">
+	    				<h:outputText value="#{t.disciplina.periodo.nome}" />
+	    			</p:column>
+	    			<p:column headerText="Turno">
+	    				<h:outputText value="#{t.turno.nome}" />
+	    			</p:column>
+	    			<p:column headerText="Opções"  rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAD}" >
+	    				<p:commandLink action="cadastroTurma.jsf" title="Alterar">
+	    					<h:graphicImage library="imagens" name="editar.png" />
+	    					<f:param name="idTurma" value="#{t.id}"/>
+	    				</p:commandLink>
+	    				<p:spacer width="10"/>
+	    				<p:commandLink update=":ccexclusao:formConfirmacao" process="@this" oncomplete="confirmacao.show()" title="Excluir">
+	    					<h:graphicImage library="imagens" name="excluir.jpg" />
+	    					<f:setPropertyActionListener target="#{turmaMB.turma}" value="#{t}"/>
+	    				</p:commandLink>
+					</p:column>
+	    		</p:dataTable>
+	    		<div align="right">
+	    			<p:commandButton value="Adicionar" action="formularioTurma"
+	    			rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAD}" />
+	    		</div>
+    		</h:form>
+    		<confirm:confirmacao id="ccexclusao" campoParaAtualizar=":listaForm:tabelaTurmas, :listaForm"
+					metodo="#{turmaMB.excluir()}" tituloPainel="Exclusão de Turma" 
+					mensagemConfirmacao="Tem certeza que deseja excluir a turma #{turmaMB.turma.disciplina.nome} - #{turmaMB.turma.turno.nome} ?"  />
+    	</ui:define>
+   </ui:composition>
+</html>

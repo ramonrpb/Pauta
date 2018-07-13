@@ -1,0 +1,162 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    		<div style="width: 100%;" align="center" >
+			
+				
+					
+			
+				<h:form id="formListagem" >
+					<p:messages id="mensagemSucesso" closable="true" />
+					
+					<p:spacer width="10px;" />
+					<p:panelGrid styleClass="panelGridSemBorda">
+						<p:row>
+							
+							<p:column>
+								<p:outputLabel value="Filtrar por codigo"/>
+							</p:column>
+							<p:column>
+								<p:inputText id="filtroCodigo" value="#{disciplinaMB.filtroCodigo}" />
+							</p:column>
+							
+							<p:column>
+								<p:outputLabel>Período</p:outputLabel>
+							</p:column>
+							<p:column>
+								<p:selectOneMenu id="filtroPeriodo" value="#{disciplinaMB.filtroPeriodo}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItems value="#{disciplinaMB.listaPeriodo}" 
+									var="periodo" itemValue="#{periodo.id}" itemLabel="#{periodo.nome}" />
+								</p:selectOneMenu>
+							</p:column>
+							<p:column>
+								
+								<p:commandButton value="Filtrar" update=":formListagem" style="margin-right: 50px;"
+							actionListener="#{disciplinaMB.filtrarDisciplina()}" process=":formListagem" onstart="disciplinaTableVar.getPaginator().setPage(0);"/>
+								
+							</p:column>
+						</p:row>
+					
+					</p:panelGrid>
+					<div style="width: 100%; text-align: right;" >
+						<p:commandButton value="Adicionar Disciplina" update="@(form)" style="margin-right: 50px;"
+							actionListener="#{disciplinaMB.novaDisciplina}" oncomplete="inserirAlterarDisciplina.show()" immediate="true" />
+					</div>
+					
+					<p:dataTable id="funcionalidades" value="#{disciplinaMB.listaDisciplina}"
+						var="disciplina" emptyMessage="Nenhuma disciplina foi cadastrada."
+					 	style="width:900px;" paginator="true" rows="#{disciplinaMB.qtdDados}" rowIndexVar="indice" widgetVar="disciplinaTableVar">
+		  			
+		  			<!-- 
+		  				<f:facet name="header" >
+		    				<p:outputLabel value="Listagem de disciplina" style="font-size: 10px;" />
+		    				
+		    				<p:outputLabel value="" style="font-size: 10px;" />
+		    				
+		    				<p:selectOneMenu id="turma" value="#{disciplinaMB.qtdDados}"  style="font-size: 8px;" >
+								<f:selectItem itemLabel="2" itemValue="2" />
+								<f:selectItem itemLabel="5" itemValue="5" />
+								<f:selectItem itemLabel="10" itemValue="10" />
+								<p:ajax event="change" update=":formListagem" />
+							</p:selectOneMenu>
+		    				
+		    			</f:facet>
+		  			-->
+			  			<p:column headerText="Codigo" width="30px" sortBy="#{disciplina.codigo}" >
+							<p:outputLabel value="#{disciplina.codigo}" />
+			  			</p:column>
+						<p:column headerText="Nome" sortBy="#{disciplina.nome}">
+			  				<p:outputLabel value="#{disciplina.nome}" />
+			  			</p:column>
+			  			<p:column headerText="Período" width="30px" sortBy="#{disciplina.periodo.nome}"  >
+			  				<p:outputLabel value="#{disciplina.periodo.nome}" />
+			  			</p:column>
+			  			
+						<p:column headerText="Ações" width="100px;" style="text-align: center;" >
+						
+							<p:commandLink title="Alterar" process="@this" immediate="true" update=":form" oncomplete="inserirAlterarDisciplina.show()" >
+								<h:graphicImage library="imagens" name="editar.png" />
+								<f:setPropertyActionListener target="#{disciplinaMB.disciplina}" value="#{disciplina}" />
+							</p:commandLink>
+							<p:spacer width="5px;" />
+							
+							<p:commandLink title="Excluir" update=":ccexclusao:formConfirmacao" process="@this" immediate="true" oncomplete="confirmacao.show()" >
+								<h:graphicImage library="imagens" name="excluir.jpg" />
+								<f:setPropertyActionListener target="#{disciplinaMB.disciplina}" value="#{disciplina}" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+					
+				</h:form>
+				
+				<confirm:confirmacao id="ccexclusao" campoParaAtualizar=":formListagem"
+					metodo="#{disciplinaMB.excluirDisciplina}" tituloPainel="Exclusão de Disciplina" 
+					mensagemConfirmacao="Tem certeza que deseja excluir a disciplina #{disciplinaMB.disciplina.nome} (#{disciplinaMB.disciplina.codigo}) ?"  />
+				
+				<p:dialog widgetVar="inserirAlterarDisciplina" closable="true" modal="true" appendTo="@(body)" header="Cadastro/Alteração Disciplina" 
+					onShow="updateDialog()" >
+					<h:form id="form">
+					<p:remoteCommand name="updateDialog" resetValues="true" update=":form:panelCadastroAlteracaoDisciplina" />
+						<p:messages closable="true" />
+						<p:outputPanel id="panelCadastroAlteracaoDisciplina" style="align: left;">
+							<p:panelGrid styleClass="panelGridSemBorda">
+								<p:row>
+									<p:column>
+										<p:outputLabel>Nome</p:outputLabel>
+									</p:column>
+									<p:column>
+										<p:inputText value="#{disciplinaMB.disciplina.nome}" maxlength="150" style="width: 300px;"
+											required="true" requiredMessage="Obrigatório o preenchimento do nome da disciplina" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:outputLabel>Código</p:outputLabel>
+									</p:column>
+									<p:column>
+										<p:inputText value="#{disciplinaMB.disciplina.codigo}" size="70" maxlength="100" 
+											validator="akDisciplinaValidator" 
+											required="true" requiredMessage="Obrigatório o preenchimento do código da disciplina" >
+											<f:attribute name="codigo" value="#{disciplinaMB.disciplina.codigo}" />
+										</p:inputText>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:outputLabel>Período</p:outputLabel>
+									</p:column>
+									<p:column>
+										<p:selectOneMenu value="#{disciplinaMB.disciplina.periodo.id}"
+											required="true" requiredMessage="Obrigatório o preenchimento do período">
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItems value="#{disciplinaMB.listaPeriodo}" var="periodo" itemValue="#{periodo.id}" itemLabel="#{periodo.nome}" />
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="2" style="text-align:right;">
+										<p:commandButton update=":form, :formListagem:funcionalidades" value="Salvar" actionListener="#{disciplinaMB.salvarDisciplina}"
+											rendered="#{disciplinaMB.disciplina.id eq null}" />
+											
+										<p:commandButton update=":form, :formListagem" value="Alterar" actionListener="#{disciplinaMB.editarDisciplina}"
+											rendered="#{disciplinaMB.disciplina.id ne null}"
+											oncomplete="if (args &amp;&amp; !args.validationFailed) inserirAlterarDisciplina.hide()" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:outputPanel>
+					</h:form>
+					
+				</p:dialog>
+				
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

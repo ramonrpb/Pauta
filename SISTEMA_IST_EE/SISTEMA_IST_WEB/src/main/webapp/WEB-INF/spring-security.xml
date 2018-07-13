@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+ 
+ 	
+ 	<global-method-security secured-annotations="enabled" jsr250-annotations="enabled"/>
+	<http auto-config="true" use-expressions="true">
+	
+		<intercept-url pattern="/ator/cadastroAtor**" access="hasAnyRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/ator/**" access="isAuthenticated()"  />
+		<intercept-url pattern="/professor/listaProfessor**" access="hasAnyRole('ROLE_ADMIN')"  />
+		<intercept-url pattern="/professor/cadastroProfessor**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		<intercept-url pattern="/aluno/listaAluno**" access="hasAnyRole('ROLE_ADMIN')"  />
+		<intercept-url pattern="/aluno/cadastroAluno**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_ALUNO')"  />
+		<intercept-url pattern="/turma/listaTurma**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		<intercept-url pattern="/aula/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		<intercept-url pattern="/turma/cadastroTurma**" access="hasAnyRole('ROLE_ADMIN')"  />
+		<intercept-url pattern="/cadastro/**" access="hasAnyRole('ROLE_ADMIN')"  />
+		<intercept-url pattern="/visualizacao/visualizacaoPauta**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		<!--  <intercept-url pattern="/avaliacao/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />-->
+		<intercept-url pattern="/professor/envioEmail**" access="hasAnyRole('ROLE_PROFESSOR')"  />
+		
+		<intercept-url pattern="/avaliacao/cadastroAvaliacao.jsf**" access="hasAnyRole('ROLE_ADMIN')"  />
+		<intercept-url pattern="/avaliacao/cadastroNotas.jsf**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		<intercept-url pattern="/avaliacao/visualizacaoNotas.jsf**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		
+		<intercept-url pattern="/visualizacao/visualizacaoNotasAluno**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_ALUNO')"  />
+		<intercept-url pattern="/visualizacao/visualizacaoFrequencia.**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		<intercept-url pattern="/visualizacao/visualizacaoFrequenciaAluno**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_ALUNO')"  />
+		
+		<intercept-url pattern="/relatorio/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')"  />
+		
+		<intercept-url pattern="/ajusteLoginEmail**" access="hasAnyRole('ROLE_ADMIN')"  />
+		<access-denied-handler  error-page="/acessoNegado.jsf"/>
+		<form-login login-page="/index.jsf" />
+		
+	</http>
+ 
+ 
+	<beans:bean id="customAuthenticationProvider" class="br.com.sistemaist.autenticacao.ProvedorAutenticacao" />   
+ 	<authentication-manager alias="authenticationManager">
+		<authentication-provider ref="customAuthenticationProvider"/>
+	</authentication-manager>
+</beans:beans>

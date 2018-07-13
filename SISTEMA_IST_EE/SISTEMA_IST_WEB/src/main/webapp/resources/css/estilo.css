@@ -1,0 +1,178 @@
+@CHARSET "UTF-8";
+
+/* Base CSS */
+body {
+	/*font-family: Verdana;
+	font-size: 12px;*/
+	background-color: #edeaea;
+}
+form{
+	/*font-family: Verdana;*/
+	font-size: 12px;
+	width: 100%;
+	
+}
+
+img {
+	border: none;
+}
+
+.fundoBranco {
+	background-color: white;
+}
+
+input[type='text']{
+	width: 150px;
+	text-align: left;
+}
+
+textarea{
+	width: 300px;
+}
+
+td{
+	text-align: left;
+}
+
+/* Fim da Base CSS */
+
+/* CSS botões*/
+.alterar{
+	background-image: transparent url(#{resource['imagens/editar.png']}) no-repeat center left;
+	width: 20px!important;
+	height: 16px!important;
+	display: table-cell;
+	text-decoration: none!important;
+}
+
+.botao-login{	
+	text-decoration: none!important;
+} 
+
+/* FIm do CSS botões*/
+
+/* CSS sobreposto primefaces*/
+.ui-dialog-title{
+	font-size: 14px;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.confirmDialogGenerico .ui-dialog-content{
+	display: none!important;
+}
+
+/* Componente File Upload*/
+/*
+
+.ui-fileupload-preview {
+    width: 200%;
+    height: 200%;
+}
+
+.ui-fileupload-cancel {
+    display: none;
+}
+*/
+.template-upload {
+	display: none;
+}
+
+.ui-fileupload-progress {
+    display: none;
+}
+
+.ui-fileupload-start {
+    display: none;
+}
+
+.ui-fileupload-size {
+    display: none;
+}
+
+.ui-fileupload-upload {
+    display: none;
+}
+
+table .files {
+    min-height: 70px;
+    height: 70px;
+}
+
+.ui-wizard-step-title {
+    font-size: 15px;
+    margin:0 3px 0 0;
+    padding:0.4em;
+    float:left;
+}
+
+.panelCurtoFormulario {
+	width: 500px;
+}
+
+.hasDatepicker {
+	width:70px !important;
+}
+
+.ui-spinner-input {
+	width:70px !important;
+}
+
+.ui-helper-reset{
+	font-size: 12px;
+}
+
+.ui-datepicker{
+	width: 10em;
+}
+
+.ui-datepicker table{
+	font-size: 0.5em;
+}
+
+.ui-datepicker-header{
+	font-size: 12px;
+}
+
+.ui-selectmanycheckbox td{
+	padding: 0px !important;
+}
+
+/* Fim do CSS sobreposto primefaces*/
+
+.panelGridSemBorda tr, .panelGridSemBorda td {
+   border : none !important;
+}
+
+.scroolnone {
+	overflow: hidden !important;
+	
+}
+
+.autocomplete input {
+	width: 200px;
+}
+
+.comboSelectOneMenu label {
+	width: 100%!important;
+}
+
+.ui-selectonemenu{
+	max-width: 230px!important;	
+}
+
+.panelMenu{
+	border: none !important;
+	background-image: none !important;
+	background-color: none !important;
+	background: none !important;
+}
+
+
+@media print {
+    span, td, th, label {
+        font-size:  12px!important;
+        
+    }
+    
+}

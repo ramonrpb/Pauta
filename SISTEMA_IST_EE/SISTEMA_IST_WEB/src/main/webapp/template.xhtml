@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:menu="http://java.sun.com/jsf/composite/componentes/menu"
+      > 
+
+<h:head>
+	<link rel="shortcut icon" href="/pautaFaeterj/javax.faces.resource/imagens/logo-mini.png.jsf" type="image/gif" />
+	
+	<title>Sistema de Pauta FAETERJ</title>
+</h:head> 
+
+	<h:body id="body" style="margin: 0px;" >
+	
+		<h:outputStylesheet library="css" name="estilo.css" />
+		<h:outputScript library="js" name="locale.js" />
+		
+		<div align="center" >
+			
+			<div id="divPai" style="width: 100%; min-width:120px; max-width:1024px; background-color: white; min-height: 600px;">
+			  	
+				<h:form>
+		    		<p:toolbar style="border-radius: 0px; height: 37px;" >
+		    			<p:toolbarGroup align="left" >
+							<p:commandLink title="Home" global="false" process="@this" action="home" >
+					    		<p:graphicImage library="default" value="#{resource['imagens/logo_faeterj-petropolis_animal_inversa.png']}" 
+						    		style="vertical-align: middle; max-width: 30px; margin: 0px;" />
+						    </p:commandLink>
+						    <p:spacer width="10px;" height="0px;" />
+						    <p:commandLink title="Home" global="false" process="@this" action="home" rendered="#{sessaoMB.ator ne null}" >
+					    		<p:graphicImage library="default" value="#{resource['imagens/icon_home.png']}" 
+						    		style="vertical-align: middle; max-width: 30px; margin: 0px;" />
+						    </p:commandLink>
+			    	   </p:toolbarGroup>
+					   
+					   <p:toolbarGroup align="right" rendered="#{null eq sessaoMB.ator}"  >
+					   		<p:commandLink title="Home" global="false" process="@this" action="home" >
+					    		<p:graphicImage library="default" value="#{resource['imagens/logo_faeterj-petropolis_animal.png']}" 
+						    		style="vertical-align: middle; max-width: 30px; margin: 0px;" />
+						    </p:commandLink>
+					   
+						</p:toolbarGroup>
+					   
+					   <p:toolbarGroup align="right" rendered="#{null ne sessaoMB.ator}"  >
+					   		
+					   		<p:outputLabel value="Bem vindo #{sessaoMB.ator.nome}" />
+					    	<p:spacer width="10px;" height="0px;" />
+				            <p:commandLink id="dynaButton" title="opcoes" global="false"
+				            onmouseover="this.className='ui-state-hover'" onmouseout="this.className=''" style="height: 20px;" >
+						    	<p:graphicImage library="default" value="#{resource['imagens/opcoes.png']}" style="vertical-align: middle; max-width: 20px; " />
+						    </p:commandLink>
+					    	<p:spacer width="10px;" height="0px;" />						    
+						    <p:menu overlay="true" trigger="dynaButton" my="right top" at="center bottom"  >  
+						        <p:separator />
+						        <p:menuitem value="Alterar senha" action="alterarSenha" />  
+					            <p:menuitem value="Editar meus dados" action="cadastrarAtor" rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAD}" />
+					            <p:menuitem value="Editar meus dados" action="editarMeusDadosProfessor" rendered="#{sessaoMB.ator.perfil eq utilMB.perfilPR}" />
+					            <p:menuitem value="Editar meus dados" action="editarMeusDadosAluno" rendered="#{sessaoMB.ator.perfil eq utilMB.perfilAL}" />
+					            <p:separator />
+					            <p:menuitem value="Sair" action="#{loginMB.logout}"  />
+					            <p:separator />
+						   	</p:menu>
+						   	
+						   	<p:commandLink title="Home" global="false" process="@this" action="home" >
+					    		<p:graphicImage library="default" value="#{resource['imagens/logo_faeterj-petropolis_animal.png']}" 
+						    		style="vertical-align: middle; max-width: 30px; margin: 0px;" />
+						    </p:commandLink>
+						</p:toolbarGroup>
+		    		</p:toolbar>
+				    <menu:menu usuario="#{sessaoMB.ator}" rendered="#{sessaoMB.ator != null}"/>
+		    	</h:form>
+				    	
+		    	<p:spacer height="2px;" />
+		        <ui:insert name="conteudo">
+		        </ui:insert>
+				
+					    
+		        <p:ajaxStatus onstart="aguarde.show();" onsuccess="aguarde.hide();" oncomplete="aguarde.hide();" onerror="agurade.hide();" />
+		        
+		        <p:dialog modal="true" widgetVar="aguarde" draggable="false" header="Aguarde" resizable="false" closable="false" appendTo="@(body)" style="font-size:12px; text-align: center;" >
+					<p:graphicImage library="imagens" name="aguarde.gif" width="50px" />
+				</p:dialog>
+				
+				<p:dialog appendTo="@(body)" modal="true" widgetVar="redirecionarPagina" header="Aguarde enquanto redirecionamos..." style="font-size:12px; text-align:center"
+				      draggable="false" closable="false" resizable="false" id="redirecionar"  >  
+				           <p:graphicImage library="imagens" name="aguarde.gif"  
+				             style="width: 49px!important; height: 50px!important;"  />
+				</p:dialog>
+			</div>
+			<p:outputLabel style="font-size: 10px;" value="Desenvolvido pelo Laboratório de Modelagem Computacional Aplicada - LMCA com apoio institucional FAETERJ Petrópolis" />
+		</div>
+	</h:body> 
+</html>

@@ -1,0 +1,167 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao"
+      >
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form id="form" >
+					<div style="width: 100%; min-width:120px; max-width:1024px;">
+			   			<p:breadCrumb>  
+						    <p:menuitem value="Home" action="home" process="@this" />
+						    <p:menuitem value="Cadastro de Avaliação" action="/" process="@this" />
+						</p:breadCrumb>
+					</div>
+					<p:messages id="msgCadastro" closable="true" />
+					
+					<p:panel header="Dados Avaliação" >
+						<p:outputPanel style="text-align: right;" id="panelDadosAvaliacao">
+							<p:panelGrid styleClass="panelGridSemBorda" >
+								<p:row>
+									<p:column>
+										<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="anoLetivo" value="#{avaliacaoMB.anoLetivo.id}" styleClass="comboSelectOneMenu">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{avaliacaoMB.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+											<p:ajax event="change" listener="#{avaliacaoMB.filtrarTurmasPorAnoLetivo}" update=":form" />
+										</p:selectOneMenu>
+									</p:column>
+									
+									<p:column>
+										<p:outputLabel for="turma" value="Turma" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="turma" value="#{avaliacaoMB.avaliacao.turma.id}"
+										required="true" requiredMessage="Para adicionar uma avaliação você deve selecionar a turma" styleClass="comboSelectOneMenu">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{avaliacaoMB.listaTurmas}" var="turma" itemValue="#{turma.id}" itemLabel="#{turma.disciplina.nome} - #{turma.nome}" />
+											<p:ajax event="change" listener="#{avaliacaoMB.carregarAvaliacoes()}" update=":form"/>
+										</p:selectOneMenu>
+									</p:column>
+									
+									
+								</p:row>
+								
+							</p:panelGrid>
+							<div style="width: 100%; text-align: right;" >
+									<p:commandButton value="Lançar Notas" action="cadastroNotas.jsf" rendered="#{!empty avaliacaoMB.listaAvaliacao}">
+										<f:param name="idTurma" value="#{avaliacaoMB.avaliacao.turma.id}"/>
+									</p:commandButton>
+									<p:spacer width="10"/>
+									<p:commandButton id="adicionarValidacaoButton" value="Adicionar Avaliação" update=":formDialog, :form:msgCadastro" style="margin-right: 50px;" process=":form:anoLetivo, :form:turma"
+										oncomplete="if (!args.validationFailed) {inserirAvaliacao.show()}">
+										<p:ajax event="click" listener="#{avaliacaoMB.novaAvaliacao()}"/>
+									</p:commandButton>
+								</div>
+							
+							<br />
+							
+							
+							<p:dataTable id="listaAvaliacao" value="#{avaliacaoMB.listaAvaliacao}" var="avaliacao" emptyMessage="Não foram encontrados avaliações para esta turma" >
+								<p:column>
+						            <f:facet name="header">Nome</f:facet>  
+							        <h:outputText value="#{avaliacao.nome}" />
+								</p:column>
+							    <p:column>
+						            <f:facet name="header">Peso</f:facet>  
+									<p:outputLabel value="#{avaliacao.peso}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">Opções</f:facet>  
+									<p:commandLink title="Alterar" process="@this" update=":formDialog" onsuccess="inserirAvaliacao.show()" >
+										<h:graphicImage library="imagens" name="editar.png" />
+										<f:setPropertyActionListener target="#{avaliacaoMB.avaliacao}" value="#{avaliacao}" />
+										<f:setPropertyActionListener target="#{avaliacaoMB.acaoAvaliacao}" value="EDITAR" />
+									</p:commandLink>
+									<p:spacer width="5px;" />
+									
+									<p:commandLink title="Excluir" update=":ccexclusao:formConfirmacao" process="@this" immediate="true" oncomplete="confirmacao.show()" >
+										<h:graphicImage library="imagens" name="excluir.jpg" />
+										<f:setPropertyActionListener target="#{avaliacaoMB.avaliacao}" value="#{avaliacao}" />
+									</p:commandLink>
+								</p:column>
+								 <p:columnGroup type="footer">
+					                <p:row>
+					                    <p:column footerText="Total: " style="text-align:right"/>
+					                   
+					                    <p:column footerText="#{avaliacaoMB.totalPeso}" />
+					                </p:row>
+					            </p:columnGroup>
+								
+							</p:dataTable>
+							
+							<br />
+							<h:inputHidden id="validacaoPeso" required="#{avaliacaoMB.totalPeso - 10 != 0}" requiredMessage="Para salvar o conjunto de avaliações o peso total obrigatóriamente deve totalizar 10"/>
+				    		<p:commandButton action="#{avaliacaoMB.salvar}" value="Salvar" update=":form" />
+				    		
+				    	</p:outputPanel>
+					</p:panel>
+				
+				</h:form>		
+			</div>
+			<confirm:confirmacao id="ccexclusao" campoParaAtualizar=":form"
+					metodo="#{avaliacaoMB.excluirAvaliacao()}" tituloPainel="Exclusão de Avaliação" 
+					mensagemConfirmacao="Tem certeza que deseja excluir a disciplina #{avaliacaoMB.avaliacao.nome} / Peso: #{avaliacaoMB.avaliacao.peso} ?"  />
+			<p:dialog widgetVar="inserirAvaliacao" closable="true" modal="true" appendTo="@(body)" header="Cadastro Avaliação" 
+					onShow="updateDialog()" position="center" draggable="false" height="150">
+					<h:form id="formDialog">
+						<p:remoteCommand name="updateDialog" resetValues="true" update=":formDialog:panelCadastroAvaliacao" />
+						<p:messages closable="true"/>
+						<p:outputPanel id="panelCadastroAvaliacao" style="align: left;">
+							<p:panelGrid styleClass="panelGridSemBorda">
+								<p:row>
+									<p:column>
+										<p:outputLabel>Nome</p:outputLabel>
+									</p:column>
+									<p:column>
+										<p:inputText id="nomeAvaliacao" value="#{avaliacaoMB.avaliacao.nome}" maxlength="10" style="width: 300px;"
+											required="true" requiredMessage="Obrigatório o preenchimento do nome da avaliação" 
+											validator="akAvaliacaoNaTurmaValidator" disabled="#{avaliacaoMB.acaoAvaliacao eq 'EDITAR'}"
+										>
+											<f:attribute name="listaAvaliacao" value="#{avaliacaoMB.listaAvaliacao}"/>
+										</p:inputText>
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column>
+										<p:outputLabel>Peso</p:outputLabel>
+									</p:column>
+									<p:column>
+										<p:spinner id="pesoAvaliacao" value="#{avaliacaoMB.avaliacao.peso}" required="true" 
+										requiredMessage="Obrigatório o preenchimento do peso"
+										max="#{avaliacaoMB.maximoPeso}"
+										min="#{avaliacaoMB.minimoPeso}"
+										/>
+									</p:column>
+								</p:row>
+								
+								<p:row>
+									<p:column colspan="2" style="text-align:right;">
+										<p:commandButton update=":form:listaAvaliacao, :formDialog" value="Adicionar" 
+										actionListener="#{avaliacaoMB.salvarAvaliacao}" 
+											rendered="#{avaliacaoMB.acaoAvaliacao eq 'INCLUIR'}" >
+
+										</p:commandButton>
+											
+											<p:commandButton update=":form, :formDialog" value="Editar" 
+										actionListener="#{avaliacaoMB.salvarAvaliacao}" 
+											rendered="#{avaliacaoMB.acaoAvaliacao eq 'EDITAR'}" 
+											oncomplete="if (args &amp;&amp; !args.validationFailed) inserirAvaliacao.hide()"/>
+										
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p:outputPanel>
+					</h:form>
+					<p:ajax event="close" listener="#{avaliacaoMB.recriarObjetoAvaliacao()}"/>
+				</p:dialog>
+		</ui:define>
+	</ui:composition>
+</html>

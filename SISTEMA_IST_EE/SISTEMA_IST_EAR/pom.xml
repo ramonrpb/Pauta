@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <name>SISTEMA_IST_EAR</name>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>SISTEMA_IST_EAR</artifactId>
+    <packaging>ear</packaging>
+ 
+	<parent>
+        <groupId>br.com.sistemaist</groupId>
+        <artifactId>SISTEMA_IST_EE</artifactId>
+        <version>1.0.0</version>
+    </parent>
+ 
+    <build>
+    	<finalName>${project.artifactId}</finalName>
+    	<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+ 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                </configuration>
+            </plugin>
+ 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                	<displayName>SISTEMA_IST_EAR</displayName>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <fileNameMapping>no-version</fileNameMapping>
+                    <modules>
+                    	<ejbModule>
+                        	<groupId>${project.groupId}</groupId>
+                            <artifactId>SISTEMA_IST_EJB</artifactId>
+                        </ejbModule>
+                        <webModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>SISTEMA_IST_WEB</artifactId>
+                            <contextRoot>/pautaFaeterj</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SISTEMA_IST_EJB</artifactId>
+            <version>1.0.0</version>
+            <type>ejb</type>
+        </dependency>
+         
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SISTEMA_IST_WEB</artifactId>
+            <version>1.0.0</version>
+            <type>war</type>
+        </dependency>   
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>  
+    </dependencies>
+ 
+</project>

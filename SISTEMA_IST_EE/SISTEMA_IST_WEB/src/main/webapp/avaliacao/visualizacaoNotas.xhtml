@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:confirm="http://java.sun.com/jsf/composite/componentes/confirmacao"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+	  xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    		<div style="width: 100%;" align="center" >
+				<h:form id="form" >
+					<div style="width: 100%; min-width:120px; max-width:1024px;">
+			   			<p:breadCrumb>  
+						    <p:menuitem value="Home" action="home" process="@this" />
+						    <p:menuitem value="Cadastro de Notas" action="/" process="@this" />
+						</p:breadCrumb>
+					</div>
+					<p:messages id="msgCadastro" closable="true" autoUpdate="true"/>
+					
+					<p:panel header="Turma das Notas" >
+						<p:outputPanel style="text-align: right;" id="panelDadosAvaliacao">
+							<p:panelGrid styleClass="panelGridSemBorda" >
+								<p:row>
+									<p:column>
+										<p:outputLabel for="anoLetivo" value="Ano Letivo" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="anoLetivo" value="#{alunoAvaliacaoMB.anoLetivo.id}" styleClass="comboSelectOneMenu">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{alunoAvaliacaoMB.listaAnoLetivo}" var="anoLet" itemValue="#{anoLet.id}" itemLabel="#{anoLet.nomeFormatado}" />
+											<p:ajax event="change" listener="#{alunoAvaliacaoMB.filtrarTurmasPorAnoLetivo}" update=":form" />
+										</p:selectOneMenu>
+									</p:column>
+									
+									<p:column>
+										<p:outputLabel for="turma" value="Turma" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="turma" value="#{alunoAvaliacaoMB.idTurma}" filter="true" filterMatchMode="contains"
+										required="true" requiredMessage="Para adicionar uma avaliação você deve selecionar a turma" styleClass="comboSelectOneMenu">
+											<f:selectItem itemLabel="Selecione" />
+											<f:selectItems value="#{alunoAvaliacaoMB.listaTurmas}" var="turma" itemValue="#{turma.id}" itemLabel="#{turma.disciplina.nome} - #{turma.nome}" />
+											<p:ajax event="change" listener="#{alunoAvaliacaoMB.carregarAlunoAvaliacao()}" update=":form" process=":form:turma"/>
+										</p:selectOneMenu>
+									</p:column>
+								</p:row>
+								
+							</p:panelGrid>
+							
+							<br />
+							
+								<p:dataTable id="listaNotas" value="#{alunoAvaliacaoMB.turma.alunoTurma}" var="alunoTurma" 
+								rendered="#{!empty alunoAvaliacaoMB.turma.alunoTurma}">
+									<p:messages id="msgCadastro" closable="true" autoUpdate="true" />
+									<f:facet name="header" >
+					    				<p:outputLabel value="Ano Letivo: #{alunoAvaliacaoMB.turma.anoLetivo.nomeFormatado} - Código da Disciplina: #{alunoAvaliacaoMB.turma.disciplina.codigo} - Nome da Disciplina: #{alunoAvaliacaoMB.turma.disciplina.nome} " 
+					    				style="float: left; font-size: 10px;"  rendered="#{!empty alunoAvaliacaoMB.turma.alunoTurma}"/>
+					    				<p:outputLabel value="Nome do Professor: #{alunoAvaliacaoMB.turma.professor.nome}" rendered="#{alunoAvaliacaoMB.turma.alunoTurma.size() > 0}" style="font-size: 10px;" />
+					    			</f:facet>
+					    			<p:column headerText="Matrícula">
+					    				<h:outputText value="#{alunoTurma.aluno.matricula}" />
+					    			</p:column>
+									<p:column>
+							            <f:facet name="header">Nome</f:facet>  
+								        <h:outputText value="#{alunoTurma.aluno.nome}" />
+									</p:column>
+									
+									<p:columns var="avaliacao" value="#{alunoAvaliacaoMB.turma.listaAvaliacao}" headerText="#{avaliacao.nome} / Peso: #{avaliacao.peso}" width="#{avaliacao.nome.concat('/ Peso: ').concat(avaliacao.peso).length() * 7.1}" >
+									
+							               	<p:outputPanel>
+												<p:outputLabel value="#{alunoAvaliacaoMB.listaAlunoAvaliacaoMap[alunoTurma.aluno][avaliacao].nota}" 
+												style="width: #{avaliacao.nome.concat('/ Peso: ').concat(avaliacao.peso).length() * 7.1}px;" >
+													<f:converter converterId="doubleConverter"/>
+												</p:outputLabel>
+											
+											</p:outputPanel>
+								       
+									</p:columns>
+									<p:column>
+										<f:facet name="header">Média</f:facet>
+										<p:column>
+											<p:outputLabel value="#{alunoAvaliacaoMB.calcularMedia(alunoTurma.aluno)}" 
+											style="#{alunoAvaliacaoMB.calcularMedia(alunoTurma.aluno) lt utilMB.mediaAprovacao ? 'color: red;' : 'font-weight: bolder;'}"
+											 >
+												<f:converter converterId="doubleConverter"/>
+											</p:outputLabel>
+										</p:column>
+
+									</p:column>
+									
+								</p:dataTable>
+							
+							<div align="right">
+								<p:commandButton rendered="#{! empty alunoAvaliacaoMB.turma.alunoTurma}" value="Imprimir">
+						    		<p:printer target="listaNotas" />
+						    	</p:commandButton>
+						    </div>
+				    	</p:outputPanel>
+					</p:panel>
+					
+				</h:form>		
+			</div>
+			
+    	</ui:define>
+	</ui:composition>
+</html>

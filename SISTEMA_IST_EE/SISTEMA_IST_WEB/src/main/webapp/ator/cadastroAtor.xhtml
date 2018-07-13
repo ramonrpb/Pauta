@@ -1,0 +1,83 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form prependId="false" id="formUsuario" enctype="multipart/form-data" >
+					
+					<p:breadCrumb>  
+					    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Cadastro de ator" action="cadastrarator" process="@this" rendered="#{nulll eq atorMB.ator.id}" />
+					    <p:menuitem value="Editar meus dados" action="cadastrarator" process="@this" rendered="#{nulll ne atorMB.ator.id}" />
+					</p:breadCrumb>
+					
+					<br />
+					<h3>Cadastro de ator <p:outputLabel value="Data cadastro: #{utilMB.formataDataHoje()}" style="float: right" /></h3>
+					
+					<p:panel header="Dados pessoais">
+						<p:panelGrid styleClass="panelGridSemBorda" >
+							<p:row>
+								<p:column colspan="2" >
+									<p:messages autoUpdate="true" closable="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="login" value="Login"  />
+								</p:column>
+								<p:column>
+									<p:inputText id="login" required="true" requiredMessage="Login é obrigatório" value="#{atorMB.ator.email}"
+							    		validator="#{validatorMB.validaExistenciaLogin}" maxlength="100" style="width: 250px;"  >
+							    		<f:attribute value="#{atorMB.ator.id}" name="idAtor" />
+							    	</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{null == atorMB.ator.id}" >
+								<p:column>
+									<p:outputLabel for="senha" value="Senha" />
+								</p:column>
+								<p:column>
+									<p:password id="senha" required="true" requiredMessage="Senha é obrigatória" value="#{atorMB.ator.senha}"
+								    	 match="confirmacaoSenha" validatorMessage="Senha não confere" feedback="true" promptLabel="Digite a Senha" 
+								    	 weakLabel="Senha fraca" goodLabel="Senha Razoável" strongLabel="Senha Forte" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row rendered="#{null == atorMB.ator.id}">
+								<p:column>
+									<p:outputLabel for="confirmacaoSenha" value="Confirmação de Senha" />
+								</p:column>
+								<p:column>
+									<p:password id="confirmacaoSenha" required="true" requiredMessage="Confirmção de senha é obrigatória"
+										value="#{atorMB.ator.senha}" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="nome" value="Nome" />
+								</p:column>
+								<p:column>
+									<p:inputText id="nome" value="#{atorMB.ator.nome}" required="true" requiredMessage="Nome é obrigatório"
+										size="30" style="width: 250px;" maxlength="70" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column colspan="2">
+									<div style="float: right; margin-top: 3px;">
+										<p:commandButton icon="ui-icon-disk" value="Salvar" action="#{atorMB.salvaraAtor}" rendered="#{atorMB.ator.id eq null}" />
+										<p:commandButton icon="ui-icon-disk" value="Alterar" action="#{atorMB.editarAtor}" rendered="#{atorMB.ator.id ne null}" />
+									</div>
+								</p:column>
+							</p:row>	
+						</p:panelGrid>
+						
+					</p:panel>
+				</h:form>		
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

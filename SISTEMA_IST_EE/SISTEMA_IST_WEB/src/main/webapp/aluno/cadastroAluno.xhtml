@@ -1,0 +1,96 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="../template.xhtml">
+    	<ui:define name="conteudo">
+    	
+			<div style="width: 100%;" align="center" >
+				<h:form prependId="false" id="form" enctype="multipart/form-data" >
+					
+					<p:breadCrumb>  
+					    <p:menuitem value="Home" action="home" process="@this" />  
+					    <p:menuitem value="Listagem de Alunos" action="listagemAlunos" process="@this" />
+					    <p:menuitem value="Cadastro de Aluno" action="formularioAluno" process="@this" rendered="#{nulll eq alunoMB.aluno.id}" />
+					</p:breadCrumb>
+					
+					<br />
+					
+					<div class="panelCurtoFormulario">
+						<p:messages id="msgCadastro" closable="true" />
+					</div>
+					<p:spacer width="10" height="10" />
+						
+					<p:panel header="Dados cadastrais" styleClass="panelCurtoFormulario">
+						<p:panelGrid styleClass="panelGridSemBorda">
+							<p:row>
+								<p:column>
+									<p:outputLabel for="email" value="E-mail (Login)"  />
+								</p:column>
+								<p:column>
+									<p:inputText id="email" required="true" style="width: 190px;" requiredMessage="E-mail é obrigatório" value="#{alunoMB.aluno.email}"
+							    		validator="#{validatorMB.validaExistenciaLogin}" maxlength="70" disabled="#{alunoMB.aluno.id ne null}">
+							    		<f:attribute value="#{alunoMB.aluno.id}" name="idAtor" />
+							    	</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row rendered="#{null == alunoMB.aluno.id}" >
+								<p:column>
+									<p:outputLabel for="senha" value="Senha" />
+								</p:column>
+								<p:column>
+									<p:password id="senha" required="true" requiredMessage="Senha é obrigatória" value="#{alunoMB.aluno.senha}"
+								    	 match="confirmacaoSenha" validatorMessage="Senha não confere" feedback="true" promptLabel="Digite a Senha" 
+								    	 weakLabel="Senha fraca" goodLabel="Senha Razoável" strongLabel="Senha Forte" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+							<p:row rendered="#{null == alunoMB.aluno.id}">
+								<p:column>
+									<p:outputLabel for="confirmacaoSenha" value="Confirmação de Senha" />
+								</p:column>
+								<p:column>
+									<p:password id="confirmacaoSenha" required="true" requiredMessage="Confirmção de senha é obrigatória"
+										value="#{alunoMB.aluno.senha}" redisplay="true" maxlength="15" />
+								</p:column>
+							</p:row>
+														
+						</p:panelGrid>
+					</p:panel>
+					<br />
+					<p:panel header="Dados pessoais" styleClass="panelCurtoFormulario">
+						<p:panelGrid styleClass="panelGridSemBorda">				
+							<p:row>
+								<p:column>
+									<p:outputLabel for="nome" value="Nome" />
+								</p:column>
+								<p:column>
+									<p:inputText id="nome" value="#{alunoMB.aluno.nome}" required="true" requiredMessage="Nome é obrigatório"
+										size="30" style="width: 250px;" maxlength="70" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column>
+									<p:outputLabel for="matricula" value="Matrícula" />
+								</p:column>
+								<p:column>
+									<p:inputText id="matricula" value="#{alunoMB.aluno.matricula}" required="true" requiredMessage="Matrícula é obrigatório"
+										size="30" style="width: 250px;" maxlength="70" disabled="#{null ne alunoMB.aluno.id and sessaoMB.ator.perfil eq utilMB.perfilAL}"
+										validator="akAlunoMatriculaValidator" >
+										<f:attribute name="codigo" value="#{alunoMB.aluno.id}" />
+									</p:inputText>
+								</p:column>
+							</p:row>
+							
+						</p:panelGrid>
+					</p:panel>
+					<div align="right" class="panelCurtoFormulario">
+						<p:commandButton action="#{alunoMB.salvarAluno}" value="Salvar" update=":form"/>
+					</div>
+				
+				</h:form>		
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>

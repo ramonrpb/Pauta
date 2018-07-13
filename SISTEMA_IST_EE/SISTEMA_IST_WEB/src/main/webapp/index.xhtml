@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+ 
+	<ui:composition template="template.xhtml">
+    	<ui:define name="conteudo">
+			<div style="width: 100%;" align="center" >
+			
+				<h:form id="formMenu" prependId="false">
+		    		
+		    		<p:messages id="mensagemFalhaLogin" closable="true" />
+			    	
+			    	<h:graphicImage library="default" value="#{resource['imagens/logo_faeterj-petropolis_pequeno.png']}" style="max-width:360px;" />
+			    	
+		    		<p:outputPanel rendered="#{null == sessaoMB.ator}" style="background-color: white; margin:5px;">
+				    	<br />
+				    	<p:outputLabel value="Login" />
+			    		<p:spacer width="5px;" />
+				    	<p:inputText id="login" value="#{loginMB.username}" required="true" requiredMessage="Preencha o Login" style="width: 210px;" />
+				    	
+				    	<p:spacer width="5px;" />
+				    	<p:outputLabel value="Senha" /><p:spacer width="5px;" />
+				    	<p:password id="senha" value="#{loginMB.password}" required="true" requiredMessage="Preencha a senha" />	
+				    	<p:spacer width="5px;" />
+				    	<p:commandButton action="#{loginMB.login}" value="Entrar" type="submit" styleClass="botao-login" update="mensagemFalhaLogin" />
+				    	
+				    	<br />
+				    	<p:commandLink action="esqueciMinhaSenha" process="@this" value="ESQUECI MINHA SENHA." />
+				    	
+				    	<br /><br />
+		    		</p:outputPanel>
+			    	<p:outputPanel rendered="#{null != sessaoMB.ator}">
+			    		<h:outputText value="Bem vindo #{sessaoMB.ator.nome}" />
+			    		<p:spacer width="5px;" />
+				    	<p:commandButton action="#{loginMB.logout}" value="Sair" type="submit" styleClass="botao-login"/>
+			    		<p:spacer width="5px;" />
+				    	<p:commandLink value="Ir para Home" action="home" />
+			    	</p:outputPanel>
+			    	
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</html>
+

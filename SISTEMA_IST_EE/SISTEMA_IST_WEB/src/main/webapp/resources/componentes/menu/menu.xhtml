@@ -1,0 +1,78 @@
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+>
+
+<cc:interface>
+	<cc:attribute name="usuario" type="br.com.sistemaist.entidades.Ator"/>
+</cc:interface>
+
+<cc:implementation>
+
+	<p:menubar id="menuPrincipal" style="background: #ddd; border-radius: 0px; border: 0px; padding: 0px;" >
+	
+		<p:submenu label="Cadastro" rendered="#{cc.attrs.usuario.perfil eq utilMB.perfilAD or cc.attrs.usuario.perfil eq utilMB.perfilPR}">
+			
+            <p:submenu label="Professor" rendered="#{cc.attrs.usuario.perfil == utilMB.perfilAD}">
+               	<p:menuitem value="Cadastro" url="/professor/cadastroProfessor.jsf" onclick="redirecionarPagina.show()" />
+               	<p:menuitem value="Listar" url="/professor/listaProfessor.jsf" onclick="redirecionarPagina.show()" />
+            </p:submenu>
+            
+            <p:submenu label="Aluno" rendered="#{cc.attrs.usuario.perfil == utilMB.perfilAD}" >
+               	<p:menuitem value="Cadastro" url="/aluno/cadastroAluno.jsf" onclick="redirecionarPagina.show()" />
+               	<p:menuitem value="Listar" url="/aluno/listaAluno.jsf" onclick="redirecionarPagina.show()" />
+            </p:submenu>
+            
+            <p:submenu label="Turma" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD) or (cc.attrs.usuario.perfil == utilMB.perfilPR)}" >
+               	<p:menuitem value="Cadastro" url="/turma/cadastroTurma.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD)}" onclick="redirecionarPagina.show()" />
+               	<p:menuitem value="Listar" url="/turma/listaTurma.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD) or (cc.attrs.usuario.perfil == utilMB.perfilPR)}" onclick="redirecionarPagina.show()" />
+            </p:submenu>
+            
+            <p:submenu label="Outros" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD)}" >
+               	<p:menuitem value="Ano Letivo" url="/cadastro/cadastroAnoLetivo.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD)}" onclick="redirecionarPagina.show()" />
+               	<p:menuitem value="Avaliação" url="/avaliacao/cadastroAvaliacao.jsf" onclick="redirecionarPagina.show()" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD)}"/>
+               	<p:menuitem value="Disciplina" url="/cadastro/cadastroDisciplina.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD)}" onclick="redirecionarPagina.show()" />
+            </p:submenu>
+            
+        </p:submenu>
+        
+        <p:submenu label="Pauta" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD or cc.attrs.usuario.perfil == utilMB.perfilPR or cc.attrs.usuario.perfil == utilMB.perfilAL)}">
+        	<p:menuitem value="Gerar" url="/aula/cadastroAula.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD or cc.attrs.usuario.perfil == utilMB.perfilPR)}" onclick="redirecionarPagina.show()" />
+            <p:menuitem value="Listar" url="/aula/listaAula.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD or cc.attrs.usuario.perfil == utilMB.perfilPR)}" onclick="redirecionarPagina.show()" />
+            
+           	<p:submenu label="Visualização" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD) or (cc.attrs.usuario.perfil == utilMB.perfilPR)}" >
+           		<p:menuitem value="Frequencia por Mês" url="/visualizacao/visualizacaoPauta.jsf" onclick="redirecionarPagina.show()" />
+	           	<p:menuitem value="Frequencia por Período" url="/visualizacao/visualizacaoFrequencia.jsf" onclick="redirecionarPagina.show()" />
+	           	
+	        </p:submenu>
+	        
+	        <p:submenu label="Visualização" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAL)}" >
+	           	<p:menuitem value="Frequencia" url="/visualizacao/visualizacaoFrequenciaAluno.jsf" onclick="redirecionarPagina.show()" />
+	        </p:submenu>   	
+       	</p:submenu>
+       	
+       	 <p:submenu label="Notas" >
+        	<p:menuitem value="Lançar" url="/avaliacao/cadastroNotas.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD or cc.attrs.usuario.perfil == utilMB.perfilPR)}" onclick="redirecionarPagina.show()" />
+            <p:menuitem value="Visualizar/Imprimir" url="/avaliacao/visualizacaoNotas.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD or cc.attrs.usuario.perfil == utilMB.perfilPR)}" onclick="redirecionarPagina.show()" />
+            
+            <p:submenu label="Visualização" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAL)}" >
+   	            <p:menuitem value="Notas" url="/visualizacao/visualizacaoNotasAluno.jsf" onclick="redirecionarPagina.show()" />
+	        </p:submenu> 
+       	</p:submenu>
+        
+        <p:submenu label="E-mail" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilPR)}">
+           	<p:menuitem value="Enviar e-mail para alunos" url="/professor/envioEmail.jsf" onclick="redirecionarPagina.show()" />
+       	</p:submenu>
+       	
+       	<p:submenu label="Relatório" rendered="#{(cc.attrs.usuario.perfil ne utilMB.perfilAL)}" >
+			<p:menuitem value="Gerar Relatório de Pauta" url="/relatorio/relatorioPauta.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD or cc.attrs.usuario.perfil == utilMB.perfilPR)}" onclick="redirecionarPagina.show()" />
+			<p:menuitem value="Gerar Relatório de Aprovação" url="/relatorio/relatorioAprovacao.jsf" rendered="#{(cc.attrs.usuario.perfil == utilMB.perfilAD or cc.attrs.usuario.perfil == utilMB.perfilPR)}" onclick="redirecionarPagina.show()" />
+		
+		</p:submenu>
+	</p:menubar>
+
+</cc:implementation>
+
+</html>

@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+>
+
+<cc:interface>
+	<!-- Metodo chamad caso confirme -->
+	<cc:attribute name="metodo" method-signature="void action()"/>
+	<!-- Mensagem exibida para o usúario -->
+	<cc:attribute name="mensagemConfirmacao" />
+	<!-- Titulo exibido no panel -->
+	<cc:attribute name="tituloPainel" />
+	<!-- Campos que sofrerao update apos confirmacao -->
+	<cc:attribute name="campoParaAtualizar" />
+</cc:interface>
+
+
+<!-- OBS: para a mensagem vir atualizada eh necessario realizar um update no form do componente -->
+<cc:implementation>
+
+	<p:dialog widgetVar="confirmacao" modal="true" header="#{cc.attrs.tituloPainel}" appendTo="@(body)" closable="true" resizable="false" >
+		<h:form id="formConfirmacao" >
+			
+			<p:panelGrid styleClass="panelGridSemBorda" style="width: 100%;">
+				<p:row>
+					<p:column>
+						<p:outputLabel value="#{cc.attrs.mensagemConfirmacao}" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column style="text-align: right;">
+						<p:commandButton value="NÃO" oncomplete="confirmacao.hide()" />
+						<p:spacer width="10px;" />
+						<p:commandButton value="SIM" action="#{cc.attrs.metodo}" update="#{cc.attrs.campoParaAtualizar}"
+								oncomplete="confirmacao.hide()" />
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+
+</cc:implementation>
+
+</html>

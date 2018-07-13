@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+
+<application>
+	<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+</application>
+	<navigation-rule>
+		<!-- Dados iniciais -->
+		<navigation-case>
+			<from-outcome>paginaInicial</from-outcome>
+			<to-view-id>/index.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>home</from-outcome>
+			<to-view-id>/ator/home.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<!-- Dados do ator -->
+		<navigation-case>
+			<!-- Cadastro e alteracao -->
+			<from-outcome>cadastrarAtor</from-outcome>
+			<to-view-id>/ator/cadastroAtor.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>alterarSenha</from-outcome>
+			<to-view-id>/ator/alterarSenha.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>esqueciMinhaSenha</from-outcome>
+			<to-view-id>/esqueciMinhaSenha.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- Fim dos dados do ator -->
+		
+		<!-- Dados de professor -->
+		<navigation-case>
+			<from-outcome>formularioProfessor</from-outcome>
+			<to-view-id>/professor/cadastroProfessor.jsf</to-view-id>
+			
+			<redirect/>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>editarMeusDadosProfessor</from-outcome>
+			<to-view-id>/professor/cadastroProfessor.jsf</to-view-id>
+			
+			<redirect >
+				<view-param>
+					<name>idProfessor</name>
+					<value>#{sessaoMB.ator.id}</value>
+				</view-param>
+				
+			</redirect>
+			
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>listagemProfessores</from-outcome>
+			<to-view-id>/professor/listaProfessor.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>envioEmail</from-outcome>
+			<to-view-id>/professor/envioEmail.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<!-- Dados de Aluno -->
+		<navigation-case>
+			<from-outcome>formularioAluno</from-outcome>
+			<to-view-id>/aluno/cadastroAluno.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>listagemAlunos</from-outcome>
+			<to-view-id>/aluno/listaAluno.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>editarMeusDadosAluno</from-outcome>
+			<to-view-id>/aluno/cadastroAluno.jsf</to-view-id>
+			
+			<redirect >
+				<view-param>
+					<name>idAluno</name>
+					<value>#{sessaoMB.ator.id}</value>
+				</view-param>
+				
+			</redirect>
+			
+		</navigation-case>
+		<!-- Fim dos Dados de Aluno -->
+		
+		<!-- Dados de turma -->
+		<navigation-case>
+			<from-outcome>formularioTurma</from-outcome>
+			<to-view-id>/turma/cadastroTurma.jsf</to-view-id>
+			
+			<redirect include-view-params="true"/>
+		</navigation-case>
+				
+		<navigation-case>
+			<from-outcome>listagemTurmas</from-outcome>
+			<to-view-id>/turma/listaTurma.jsf</to-view-id>
+			
+			<redirect />
+		</navigation-case>
+		<!-- Fim dos Dados de Turma -->
+		
+		
+		<!-- Dados da Aula -->
+		<navigation-case>
+			<from-outcome>formularioAula</from-outcome>
+			<to-view-id>/aula/cadastroAula.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>listagemAula</from-outcome>
+			<to-view-id>/aula/listaAula.jsf</to-view-id>
+			<redirect>
+				<view-param>
+					<name>idTurma</name>
+					<value>#{aulaMB.aula.turma.id}</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>editarAula</from-outcome>
+			<to-view-id>/aula/cadastroAula.jsf</to-view-id>
+			<redirect >
+				<view-param>
+					<name>idAula</name>
+					<value>#{sessaoMB.aula.id}</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<!-- Fim dos dados da aula -->
+		
+		<!-- Dados de Visualização da Pauta -->
+		<navigation-case>
+			<from-outcome>visualizacaoPauta</from-outcome>
+			<to-view-id>/visualizacao/visualizacaoPauta.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- Fim dos Visualização da Pauta -->
+		
+			<!-- Avaliação -->
+		<navigation-case>
+			<from-outcome>cadastroAvaliacao</from-outcome>
+			<to-view-id>/avaliacao/cadastroAvaliacao.jsf</to-view-id>
+			<redirect/>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>cadastroNotas</from-outcome>
+			<to-view-id>/avaliacao/cadastroNotas.jsf</to-view-id>
+			<redirect/>
+		</navigation-case>
+		
+		<!-- Dados de Visualização da Frequência -->
+		<navigation-case>
+			<from-outcome>visualizacaoFrequenciaAluno</from-outcome>
+			<to-view-id>/visualizacao/visualizacaoFrequenciaAluno.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- Fim dos Visualização da Frequência -->
+		
+		
+		<!-- Dados de Visualização da Frequência do Aluno-->
+		<navigation-case>
+			<from-outcome>visualizacaoFrequenciaAluno</from-outcome>
+			<to-view-id>/visualizacao/visualizacaoFrequencia.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- Fim dos Visualização da Frequência do Aluno-->
+
+		<!-- Dados de Visualização das Notas do Aluno-->
+		<navigation-case>
+			<from-outcome>visualizacaoNotasAluno</from-outcome>
+			<to-view-id>/visualizacao/visualizacaoNotasAluno.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- Fim dos Visualização das Notas do Aluno-->
+		
+		<!-- Dados de Relatório da Pauta -->
+		<navigation-case>
+			<from-outcome>relatorioPauta</from-outcome>
+			<to-view-id>/relatorio/relatorioPauta.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- Fim dos Relatório da Pauta -->
+		
+	</navigation-rule>
+
+ 	<!-- Converter ENUMs -->
+ 	<converter>
+		<converter-for-class>java.lang.Enum</converter-for-class>
+		<converter-class>javax.faces.convert.EnumConverter</converter-class>
+	</converter>
+	
+	
+
+</faces-config>
